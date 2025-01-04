@@ -82,7 +82,7 @@ onMounted(() => {
     ]">
         <div class="container mx-auto px-3 sm:px-4 lg:px-6 xl:px-8">
             <div class="flex items-center justify-between h-14 sm:h-16 lg:h-20">
-                <!-- Logo with responsive sizing -->
+                <!-- Logo -->
                 <Link href="/"
                     class="group relative text-lg sm:text-xl lg:text-2xl font-bold text-navy-600 hover:text-orange-500 transition-all duration-300">
                 <span class="whitespace-nowrap">Tashih Hizmetleri</span>
@@ -90,21 +90,18 @@ onMounted(() => {
                     class="absolute bottom-0 left-0 w-full h-0.5 bg-orange-500 transform scale-x-0 transition-transform duration-300 origin-left group-hover:scale-x-100"></span>
                 </Link>
 
-                <!-- Desktop Navigation with responsive spacing -->
+                <!-- Desktop Navigation -->
                 <div class="hidden md:flex items-center space-x-2 lg:space-x-4 xl:space-x-6">
                     <Link v-for="item in navigationItems" :key="item" :href="'/' + turkishToEnglish(item)"
                         class="group relative px-2 lg:px-3 py-2 text-sm lg:text-base font-medium">
-                    <span :class="[
-                        'relative z-10 transition-colors duration-300',
-                        isScrolled ? 'text-navy-600' : 'text-navy-600'
-                    ]">
+                    <span class="relative z-10 text-navy-600 transition-colors duration-300">
                         {{ item }}
                     </span>
                     <span
                         class="absolute bottom-0 left-0 w-full h-0.5 bg-orange-500 transform scale-x-0 transition-transform duration-300 origin-left group-hover:scale-x-100"></span>
                     </Link>
 
-                    <!-- Auth Buttons with responsive sizing -->
+                    <!-- Auth Buttons -->
                     <div v-if="canLogin" class="flex items-center space-x-2 lg:space-x-3">
                         <Link v-if="$page.props.auth.user" :href="route('dashboard')"
                             class="relative overflow-hidden bg-orange-500 text-white px-3 lg:px-4 py-1.5 lg:py-2 rounded text-sm lg:text-base group">
@@ -131,7 +128,7 @@ onMounted(() => {
                     </div>
                 </div>
 
-                <!-- Enhanced Mobile menu button -->
+                <!-- Mobile menu button -->
                 <button @click="toggleMenu"
                     class="md:hidden relative w-10 h-10 focus:outline-none hover:bg-gray-100 rounded-full transition-colors duration-200"
                     :aria-expanded="isMenuOpen">
@@ -153,7 +150,7 @@ onMounted(() => {
             </div>
         </div>
 
-        <!-- Enhanced Mobile menu with improved animation and spacing -->
+        <!-- Mobile menu -->
         <div :class="[
             'md:hidden fixed left-0 right-0 transition-all duration-300 ease-in-out transform',
             isMenuOpen ? 'translate-y-0 opacity-100' : '-translate-y-10 opacity-0 pointer-events-none'
@@ -165,7 +162,7 @@ onMounted(() => {
                 {{ item }}
                 </Link>
 
-                <!-- Mobile Auth Buttons with improved spacing -->
+                <!-- Mobile Auth Buttons -->
                 <div v-if="canLogin" class="mt-4 px-3 space-y-2.5">
                     <Link v-if="$page.props.auth.user" :href="route('dashboard')"
                         class="relative overflow-hidden block w-full text-center bg-orange-500 text-white px-4 py-2.5 rounded-lg group"
@@ -202,7 +199,6 @@ onMounted(() => {
     -webkit-backdrop-filter: blur(8px);
 }
 
-/* Prevent content shift when scrollbar appears/disappears */
 html {
     scrollbar-gutter: stable;
 }

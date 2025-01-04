@@ -10,7 +10,7 @@ class BlogPostController extends Controller
     public function index()
     {
         $posts = BlogPost::with('user')
-            ->where('status', 'draft') // or whatever status you want to show
+            ->where('status', 'draft')
             ->orderBy('created_at', 'desc')
             ->get();
         

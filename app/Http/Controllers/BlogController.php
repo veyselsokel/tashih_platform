@@ -1,76 +1,131 @@
 <?php
 
+// app/Http/Controllers/BlogController.php
+
 namespace App\Http\Controllers;
 
-use App\Models\Blog;
+use App\Models\BlogPost;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
+use Illuminate\Support\Str;
 
 class BlogController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth')->except(['index', 'show']);
-    }
-
     public function index()
     {
-        $blogs = Blog::latest()->paginate(10);
-        return response()->json($blogs);
+        $posts = BlogPost::with('user')
+            ->where('is_published', true)
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        return Inertia::render('BlogPage', [
+            'posts' => $posts,
+            'title' => 'Blog'
+        ]);
     }
 
     public function create()
     {
-        return response()->json(['message' => 'Use the store method to create a new blog post']);
+        return Inertia::render('Blog/Create', [
+            'title' => 'Yeni Blog Yazısı'
+        ]);
     }
 
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'title' => 'required|max:255',
-            'content' => 'required',
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+            'formatting' => 'nullable|array',
+            'featured_image' => 'nullable|image|max:2048',
+            'meta_description' => 'nullable|string|max:255',
+            'tags' => 'nullable|array',
+            'is_published' => 'boolean'
         ]);
 
-        $blog = Auth::user()->blogs()->create($validatedData);
+        // Slug oluşturma
+        $validated['slug'] = Str::slug($validated['title']);
+        
+        // Eğer aynı slug varsa sonuna numara ekleyelim
+        $count = 1;
+        while (BlogPost::where('slug', $validated['slug'])->exists()) {
+            $validated['slug'] = Str::slug($validated['title']) . '-' . $count;
+            $count++;
+        }
 
-        return response()->json($blog, 201);
+        if ($request->hasFile('featured_image')) {
+            $path = $request->file('featured_image')->store('blog', 'public');
+            $validated['featured_image'] = $path;
+        }
+
+        $validated['user_id'] = auth()->id();
+        
+        if ($validated['is_published']) {
+            $validated['published_at'] = now();
+        }
+
+        BlogPost::create($validated);
+
+        return redirect()->route('dashboard')->with('success', 'Blog yazısı başarıyla oluşturuldu.');
     }
 
-    public function show(string $id)
+    public function show($slug)
     {
-        $blog = Blog::findOrFail($id);
-        return response()->json($blog);
-    }
+        $post = BlogPost::with('user')
+            ->where('slug', $slug)
+            ->firstOrFail();
 
-    public function edit(string $id)
-    {
-        return response()->json(['message' => 'Use the update method to edit a blog post']);
-    }
-
-    public function update(Request $request, string $id)
-    {
-        $blog = Blog::findOrFail($id);
-
-        $this->authorize('update', $blog);
-
-        $validatedData = $request->validate([
-            'title' => 'required|max:255',
-            'content' => 'required',
+        return Inertia::render('Blog/Show', [
+            'post' => $post,
+            'title' => $post->title
         ]);
-
-        $blog->update($validatedData);
-
-        return response()->json($blog);
     }
-
-    public function destroy(string $id)
+    
+    public function edit($slug)
     {
-        $blog = Blog::findOrFail($id);
-
-        $this->authorize('delete', $blog);
-
-        $blog->delete();
-
-        return response()->json(null, 204);
+        $post = BlogPost::where('slug', $slug)->firstOrFail();
+        
+        return Inertia::render('Blog/Edit', [
+            'post' => $post,
+            'title' => 'Yazıyı Düzenle'
+        ]);
     }
+    
+    public function update(Request $request, $slug)
+    {
+        $post = BlogPost::where('slug', $slug)->firstOrFail();
+        
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+            'formatting' => 'nullable|array',
+            'featured_image' => 'nullable|image|max:2048',
+            'meta_description' => 'nullable|string|max:255',
+            'tags' => 'nullable|array',
+            'is_published' => 'boolean'
+        ]);
+    
+        if ($request->hasFile('featured_image')) {
+            $path = $request->file('featured_image')->store('blog', 'public');
+            $validated['featured_image'] = $path;
+        }
+    
+        if ($validated['is_published'] && !$post->published_at) {
+            $validated['published_at'] = now();
+        }
+    
+        $post->update($validated);
+    
+        return redirect()->back()->with('success', 'Blog yazısı başarıyla güncellendi.');
+    }
+    
+    public function destroy($slug)
+    {
+        $post = BlogPost::where('slug', $slug)->firstOrFail();
+        $post->delete();
+    
+        return redirect()->route('dashboard')
+            ->with('success', 'Blog yazısı başarıyla silindi.');
+    }
+    
 }

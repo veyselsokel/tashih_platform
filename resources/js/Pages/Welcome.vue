@@ -1,14 +1,14 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import { Head, Link } from '@inertiajs/vue3';
-import NavBar from '@/Components/Welcome/NavBar.vue';
 import HeroSection from '@/Components/Welcome/HeroSection.vue';
 import InfoSection from '@/Components/Welcome/InfoSection.vue';
 import FeaturesSection from '@/Components/Welcome/FeaturesSection.vue';
 import TestimonialsSection from '@/Components/Welcome/TestimonialsSection.vue';
 import ContactSection from '@/Components/Welcome/ContactSection.vue';
+import GuestLayout from '@/Layouts/GuestLayout.vue';
+import ContentComponent from '@/Components/Content/ContentComponent.vue';
 
-defineProps({
+const props = defineProps({
     canLogin: Boolean,
     canRegister: Boolean,
 });
@@ -17,6 +17,7 @@ const isScrolled = ref(false);
 
 onMounted(() => {
     window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
 });
 
 const handleScroll = () => {
@@ -25,26 +26,12 @@ const handleScroll = () => {
 </script>
 
 <template>
-
-    <Head title="Hoş Geldiniz" />
-
-    <div class="min-h-screen bg-green-50">
-        <!-- Navbar -->
-        <NavBar :can-login="canLogin" :can-register="canRegister" />
-
-        <!-- Hero Section -->
+    <GuestLayout title="Welcome">
         <HeroSection />
-
-        <!-- Info Section -->
         <InfoSection />
-
-        <!-- Features Section -->
+        <ContentComponent />
         <FeaturesSection />
-
-        <!-- Testimonials Section -->
         <TestimonialsSection />
-
-        <!-- Contact Section -->
         <ContactSection />
-    </div>
+    </GuestLayout>
 </template>

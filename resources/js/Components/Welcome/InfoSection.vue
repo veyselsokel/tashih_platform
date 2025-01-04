@@ -30,10 +30,15 @@ const features = [
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
                 <h2 class="text-3xl font-bold tracking-tight text-navy-900 sm:text-4xl">
-                    Neden Bizi Seçmelisiniz?
+                    Neden bizi seçmelisiniz?
                 </h2>
                 <p class="mt-4 text-lg leading-relaxed text-navy-600 max-w-3xl mx-auto">
-                    Profesyonel ekibimiz ve yılların deneyimiyle, metinlerinizi en yüksek kalitede düzenliyoruz.
+                    Tashih işine 1994 yılında başladık ve o günden bugüne ulusal gazeteler, çeşitli yayınevlerine ait
+                    kitap ve dergilerde hizmet vermeye devam ediyoruz.
+                </p>
+                <p class="mt-4 text-lg leading-relaxed text-navy-600 max-w-3xl mx-auto">
+                    Beklentilerinizi en iyi şekilde anlamak ve iş sürecinde sürekli iletişimde kalarak tam
+                    memnuniyetinizi en üst düzeyde sağlamak için güvence veriyoruz.
                 </p>
             </div>
 

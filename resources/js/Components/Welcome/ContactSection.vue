@@ -19,6 +19,38 @@ onMounted(() => {
     if (element) observer.observe(element);
 });
 
+// Form validation rules
+const validateForm = (formData) => {
+    const errors = {};
+
+    // Name validation
+    if (!formData.name.trim()) {
+        errors.name = 'İsim alanı zorunludur';
+    } else if (formData.name.trim().length < 2) {
+        errors.name = 'İsim en az 2 karakter olmalıdır';
+    } else if (formData.name.trim().length > 50) {
+        errors.name = 'İsim 50 karakterden uzun olamaz';
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email.trim()) {
+        errors.email = 'Email alanı zorunludur';
+    } else if (!emailRegex.test(formData.email)) {
+        errors.email = 'Geçerli bir email adresi giriniz';
+    }
+
+    // Message validation
+    if (!formData.message.trim()) {
+        errors.message = 'Mesaj alanı zorunludur';
+    } else if (formData.message.trim().length < 10) {
+        errors.message = 'Mesajınız en az 10 karakter olmalıdır';
+    } else if (formData.message.trim().length > 1000) {
+        errors.message = 'Mesajınız 1000 karakterden uzun olamaz';
+    }
+
+    return errors;
+};
 
 const form = useForm({
     name: '',
@@ -27,18 +59,46 @@ const form = useForm({
 });
 
 const isSubmitted = ref(false);
+const validationErrors = ref({});
 
 const handleSubmit = () => {
+    // Reset previous validation errors
+    validationErrors.value = {};
+
+    // Validate form
+    const errors = validateForm(form);
+
+    // If there are validation errors, show them and stop submission
+    if (Object.keys(errors).length > 0) {
+        validationErrors.value = errors;
+        return;
+    }
+
+    // If validation passes, submit the form
     form.post(route('contact.store'), {
         preserveScroll: true,
         onSuccess: () => {
             form.reset();
+            validationErrors.value = {};
             isSubmitted.value = true;
             setTimeout(() => {
                 isSubmitted.value = false;
             }, 3000);
         },
+        onError: (errors) => {
+            validationErrors.value = errors;
+        }
     });
+};
+
+// Real-time validation
+const validateField = (field) => {
+    const errors = validateForm({
+        name: form.name,
+        email: form.email,
+        message: form.message
+    });
+    validationErrors.value[field] = errors[field];
 };
 </script>
 
@@ -69,13 +129,13 @@ const handleSubmit = () => {
                                 <div class="col-span-1">
                                     <label for="name" class="block text-sm font-medium text-gray-700">İsim</label>
                                     <div class="mt-1 relative">
-                                        <input v-model="form.name" type="text" id="name" required class="block w-full px-4 py-3 text-gray-900 border border-gray-300 rounded-lg 
-                                                   shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent 
-                                                   transition-all duration-200"
-                                            :class="{ 'border-red-300': form.errors.name }">
-                                        <div v-if="form.errors.name"
+                                        <input v-model="form.name" type="text" id="name" required
+                                            @blur="validateField('name')" class="block w-full px-4 py-3 text-gray-900 border border-gray-300 rounded-lg 
+                   shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent 
+                   transition-all duration-200" :class="{ 'border-red-300': validationErrors.name }">
+                                        <div v-if="validationErrors.name"
                                             class="absolute -bottom-5 left-0 text-red-500 text-sm">
-                                            {{ form.errors.name }}
+                                            {{ validationErrors.name }}
                                         </div>
                                     </div>
                                 </div>
@@ -84,13 +144,13 @@ const handleSubmit = () => {
                                 <div class="col-span-1">
                                     <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
                                     <div class="mt-1 relative">
-                                        <input v-model="form.email" type="email" id="email" required class="block w-full px-4 py-3 text-gray-900 border border-gray-300 rounded-lg 
-                                                   shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent 
-                                                   transition-all duration-200"
-                                            :class="{ 'border-red-300': form.errors.email }">
-                                        <div v-if="form.errors.email"
+                                        <input v-model="form.email" type="email" id="email" required
+                                            @blur="validateField('email')" class="block w-full px-4 py-3 text-gray-900 border border-gray-300 rounded-lg 
+                   shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent 
+                   transition-all duration-200" :class="{ 'border-red-300': validationErrors.email }">
+                                        <div v-if="validationErrors.email"
                                             class="absolute -bottom-5 left-0 text-red-500 text-sm">
-                                            {{ form.errors.email }}
+                                            {{ validationErrors.email }}
                                         </div>
                                     </div>
                                 </div>
@@ -100,13 +160,14 @@ const handleSubmit = () => {
                             <div>
                                 <label for="message" class="block text-sm font-medium text-gray-700">Mesaj</label>
                                 <div class="mt-1 relative">
-                                    <textarea v-model="form.message" id="message" rows="6" required class="block w-full px-4 py-3 text-gray-900 border border-gray-300 rounded-lg 
-                                               shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent 
-                                               transition-all duration-200 resize-none"
-                                        :class="{ 'border-red-300': form.errors.message }"></textarea>
-                                    <div v-if="form.errors.message"
+                                    <textarea v-model="form.message" id="message" rows="6" required
+                                        @blur="validateField('message')" class="block w-full px-4 py-3 text-gray-900 border border-gray-300 rounded-lg 
+                   shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent 
+                   transition-all duration-200 resize-none"
+                                        :class="{ 'border-red-300': validationErrors.message }"></textarea>
+                                    <div v-if="validationErrors.message"
                                         class="absolute -bottom-5 left-0 text-red-500 text-sm">
-                                        {{ form.errors.message }}
+                                        {{ validationErrors.message }}
                                     </div>
                                 </div>
                             </div>

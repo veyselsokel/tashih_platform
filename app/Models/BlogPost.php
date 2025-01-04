@@ -2,30 +2,48 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class BlogPost extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $fillable = [
-        'user_id',
         'title',
         'slug',
         'content',
+        'formatting',
         'featured_image',
-        'status',
-        'published_at'
+        'meta_description',
+        'tags',
+        'is_published',
+        'published_at',
+        'user_id'
     ];
 
-    protected $dates = [
-        'published_at',
-        'created_at',
-        'updated_at',
-        'deleted_at'
+    protected $casts = [
+        'formatting' => 'array',
+        'tags' => 'array',
+        'is_published' => 'boolean',
+        'published_at' => 'datetime'
     ];
+
+    // Yayınlanmış blog yazılarını getiren scope
+    public function scopePublished($query)
+    {
+        return $query->where('is_published', true)
+                    ->whereNotNull('published_at')
+                    ->orderBy('published_at', 'desc');
+    }
+
+    // Taslak blog yazılarını getiren scope
+    public function scopeDrafts($query)
+    {
+        return $query->where('is_published', false)
+                    ->orWhereNull('published_at')
+                    ->orderBy('created_at', 'desc');
+    }
 
     public function user()
     {

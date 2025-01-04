@@ -6,23 +6,25 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up(): void
+    public function up()
     {
         Schema::create('blog_posts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('title');
             $table->string('slug')->unique();
             $table->text('content');
+            $table->json('formatting')->nullable(); // Font, renk vb. özellikler için
             $table->string('featured_image')->nullable();
-            $table->enum('status', ['draft', 'published'])->default('draft');
+            $table->text('meta_description')->nullable();
+            $table->json('tags')->nullable();
+            $table->boolean('is_published')->default(false);
             $table->timestamp('published_at')->nullable();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('blog_posts');
     }
