@@ -15,7 +15,6 @@ const isNavVisible = ref(true);
 const navigationItems = [
     'İletişim',
     'Blog',
-    'Şiir',
     'Hakkımızda',
     'Hizmetlerimiz'
 ];
