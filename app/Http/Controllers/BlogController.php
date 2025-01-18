@@ -54,6 +54,11 @@ class BlogController extends Controller
         }
 
         if ($request->hasFile('featured_image')) {
+            // Eski resmi silme
+            if ($post && $post->featured_image) {
+                Storage::disk('public')->delete($post->featured_image);
+            }
+            
             $path = $request->file('featured_image')->store('blog', 'public');
             $validated['featured_image'] = $path;
         }
