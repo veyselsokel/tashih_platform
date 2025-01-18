@@ -4,7 +4,6 @@ import { Link } from '@inertiajs/vue3';
 const navigationItems = [
     { name: 'İletişim', href: '/iletisim' },
     { name: 'Blog', href: '/blog' },
-    { name: 'Şiir', href: '/siir' },
     { name: 'Hakkımızda', href: '/hakkimizda' },
     { name: 'Hizmetlerimiz', href: '/hizmetlerimiz' }
 ];
@@ -53,7 +52,7 @@ const currentYear = new Date().getFullYear();
                         <li>
                             <a href="tel:+901234567890"
                                 class="text-gray-600 hover:text-orange-500 transition-colors duration-300">
-                                +90 123 456 78 90
+                                +90 507 371 08 45
                             </a>
                         </li>
                         <li class="text-gray-600">

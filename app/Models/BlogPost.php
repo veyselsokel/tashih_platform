@@ -45,6 +45,16 @@ class BlogPost extends Model
                     ->orderBy('created_at', 'desc');
     }
 
+    protected $appends = ['featured_image_url'];
+
+    public function getFeaturedImageUrlAttribute()
+    {
+        if ($this->featured_image) {
+            return Storage::url($this->featured_image);
+        }
+        return null;
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);
