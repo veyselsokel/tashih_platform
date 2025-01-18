@@ -1,7 +1,5 @@
 <?php
 
-// app/Http/Controllers/BlogController.php
-
 namespace App\Http\Controllers;
 
 use App\Models\BlogPost;
@@ -31,6 +29,8 @@ class BlogController extends Controller
         ]);
     }
 
+    // BlogController.php'de store metodunu güncelleyin:
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -45,7 +45,7 @@ class BlogController extends Controller
 
         // Slug oluşturma
         $validated['slug'] = Str::slug($validated['title']);
-        
+
         // Eğer aynı slug varsa sonuna numara ekleyelim
         $count = 1;
         while (BlogPost::where('slug', $validated['slug'])->exists()) {
@@ -54,17 +54,13 @@ class BlogController extends Controller
         }
 
         if ($request->hasFile('featured_image')) {
-            // Eski resmi silme
-            if ($post && $post->featured_image) {
-                Storage::disk('public')->delete($post->featured_image);
-            }
-            
+            // Yeni yazı oluşturulduğu için eski resim kontrolüne gerek yok
             $path = $request->file('featured_image')->store('blog', 'public');
             $validated['featured_image'] = $path;
         }
 
         $validated['user_id'] = auth()->id();
-        
+
         if ($validated['is_published']) {
             $validated['published_at'] = now();
         }
@@ -85,21 +81,21 @@ class BlogController extends Controller
             'title' => $post->title
         ]);
     }
-    
+
     public function edit($slug)
     {
         $post = BlogPost::where('slug', $slug)->firstOrFail();
-        
+
         return Inertia::render('Blog/Edit', [
             'post' => $post,
             'title' => 'Yazıyı Düzenle'
         ]);
     }
-    
+
     public function update(Request $request, $slug)
     {
         $post = BlogPost::where('slug', $slug)->firstOrFail();
-        
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
@@ -109,28 +105,27 @@ class BlogController extends Controller
             'tags' => 'nullable|array',
             'is_published' => 'boolean'
         ]);
-    
+
         if ($request->hasFile('featured_image')) {
             $path = $request->file('featured_image')->store('blog', 'public');
             $validated['featured_image'] = $path;
         }
-    
+
         if ($validated['is_published'] && !$post->published_at) {
             $validated['published_at'] = now();
         }
-    
+
         $post->update($validated);
-    
+
         return redirect()->back()->with('success', 'Blog yazısı başarıyla güncellendi.');
     }
-    
+
     public function destroy($slug)
     {
         $post = BlogPost::where('slug', $slug)->firstOrFail();
         $post->delete();
-    
+
         return redirect()->route('dashboard')
             ->with('success', 'Blog yazısı başarıyla silindi.');
     }
-    
 }
