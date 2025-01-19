@@ -26,8 +26,10 @@ Route::get('/siir', function () {
 })->name('poetry');
 
 Route::get('/hakkimizda', function () {
-    return Inertia::render('AboutUs');
-})->name('about-us');
+    return Inertia::render('AboutUs', [
+        'title' => 'Hakkımızda'
+    ]);
+});
 
 Route::get('/hizmetlerimiz', function () {
     return Inertia::render('Services');

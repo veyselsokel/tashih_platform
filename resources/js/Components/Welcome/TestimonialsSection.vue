@@ -9,19 +9,19 @@ const testimonials = [
         name: 'Dr. Ahmet Yılmaz',
         role: 'Akademisyen',
         content: 'Makalemizin düzenlenmesinde gösterdikleri profesyonel yaklaşım ve titiz çalışma için teşekkür ederim.',
-        image: '/api/placeholder/64/64'
+        image: '/../../../assets/kalem.png'
     },
     {
         name: 'Ayşe Kaya',
         role: 'Yazar',
         content: 'Kitabımın düzenleme sürecinde gösterdikleri özen ve sundukları yapıcı öneriler çok değerliydi.',
-        image: '/api/placeholder/64/64'
+        image: '../../../assets/kalem.png'
     },
     {
         name: 'Prof. Dr. Mehmet Demir',
         role: 'Akademisyen',
         content: 'Akademik çalışmalarımızda tercih ettiğimiz güvenilir bir çözüm ortağı.',
-        image: '/api/placeholder/64/64'
+        image: '../../../assets/kalem.png'
     }
 ];
 
