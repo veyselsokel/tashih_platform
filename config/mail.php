@@ -35,6 +35,8 @@ return [
     |
     */
 
+    'admin_address' => env('MAIL_ADMIN_ADDRESS', 'info@tashih.tr'),
+
     'mailers' => [
 
         'smtp' => [

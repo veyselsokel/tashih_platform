@@ -3,6 +3,77 @@ import { ref } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
+const maxWidth = 1920; // maksimum genişlik
+const maxHeight = 1080; // maksimum yükseklik
+const quality = 0.7; // sıkıştırma kalitesi (0-1 arası)
+const maxFileSize = 2 * 1024 * 1024; // 2MB
+
+const compressImage = (file) => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+
+        reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+
+            img.onload = () => {
+                // Boyut oranını hesapla
+                let width = img.width;
+                let height = img.height;
+
+                if (width > maxWidth) {
+                    height *= maxWidth / width;
+                    width = maxWidth;
+                }
+
+                if (height > maxHeight) {
+                    width *= maxHeight / height;
+                    height = maxHeight;
+                }
+
+                // Canvas oluştur
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+
+                // Resmi canvas'a çiz
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                // Sıkıştırılmış base64'ü al
+                canvas.toBlob((blob) => {
+                    if (blob) {
+                        // Eğer hala çok büyükse tekrar sıkıştır
+                        if (blob.size > maxFileSize) {
+                            const newQuality = (maxFileSize / blob.size) * quality;
+                            canvas.toBlob(
+                                (finalBlob) => {
+                                    resolve(finalBlob);
+                                },
+                                'image/jpeg',
+                                Math.min(newQuality, quality) // En düşük kaliteyi kullan
+                            );
+                        } else {
+                            resolve(blob);
+                        }
+                    } else {
+                        reject(new Error('Resim sıkıştırılamadı'));
+                    }
+                }, 'image/jpeg', quality);
+            };
+
+            img.onerror = (error) => {
+                reject(error);
+            };
+        };
+
+        reader.onerror = (error) => {
+            reject(error);
+        };
+    });
+};
+
 const form = useForm({
     title: '',
     content: '',
@@ -21,16 +92,27 @@ const form = useForm({
 
 const imagePreview = ref(null);
 
-const handleImageUpload = (e) => {
+const handleImageUpload = async (e) => {
     const file = e.target.files[0];
-    form.featured_image = file;
 
     if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            imagePreview.value = e.target.result;
-        };
-        reader.readAsDataURL(file);
+        try {
+            const compressedBlob = await compressImage(file);
+            // Blob'u File nesnesine çevir
+            const compressedFile = new File([compressedBlob], file.name, {
+                type: 'image/jpeg',
+                lastModified: new Date().getTime()
+            });
+
+            // Form'a compressed dosyayı ata
+            form.featured_image = compressedFile;
+
+            // Önizleme için URL oluştur
+            imagePreview.value = URL.createObjectURL(compressedBlob);
+        } catch (error) {
+            console.error('Resim sıkıştırma hatası:', error);
+            // Kullanıcıya hata mesajı göster
+        }
     }
 };
 
