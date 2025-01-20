@@ -27,7 +27,7 @@ const truncateContent = (content, maxLength = 150) => {
 
     <Head title="Blog" />
 
-    <div class="w-full h-screen px-4 py-12 sm:py-16 md:py-20 bg-gradient-to-b from-green-50 to-white">
+    <div class="w-full min-h-screen px-4 py-12 sm:py-16 md:py-20 bg-gradient-to-b from-green-50 to-white">
         <div class="max-w-4xl mx-auto">
             <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 sm:mb-10 md:mb-12 text-gray-900 text-center">
                 Blog Yazıları
