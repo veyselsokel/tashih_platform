@@ -9,19 +9,19 @@ const testimonials = [
         name: 'Dr. Ahmet Yılmaz',
         role: 'Akademisyen',
         content: 'Makalemizin düzenlenmesinde gösterdikleri profesyonel yaklaşım ve titiz çalışma için teşekkür ederim.',
-        image: '/../../../assets/kalem.png'
+        image: '/images/doctor erkek.jpg'
     },
     {
         name: 'Ayşe Kaya',
         role: 'Yazar',
         content: 'Kitabımın düzenleme sürecinde gösterdikleri özen ve sundukları yapıcı öneriler çok değerliydi.',
-        image: '../../../assets/kalem.png'
+        image: '/images/authorwoman.jpg'
     },
     {
         name: 'Prof. Dr. Mehmet Demir',
         role: 'Akademisyen',
         content: 'Akademik çalışmalarımızda tercih ettiğimiz güvenilir bir çözüm ortağı.',
-        image: '../../../assets/kalem.png'
+        image: '/images/oldprof.jpg'
     }
 ];
 
@@ -39,9 +39,12 @@ onMounted(() => {
     if (element) observer.observe(element);
 
     // Auto-rotate testimonials
-    setInterval(() => {
+    const intervalId = setInterval(() => {
         currentTestimonial.value = (currentTestimonial.value + 1) % testimonials.length;
     }, 5000);
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(intervalId);
 });
 </script>
 
@@ -62,9 +65,9 @@ onMounted(() => {
             </div>
 
             <div class="relative max-w-3xl mx-auto"
-                :class="{ 'opacity-100 translate-y-5': isVisible, 'opacity-0 translate-y-4': !isVisible }"
+                :class="{ 'opacity-100 translate-y-0': isVisible, 'opacity-0 translate-y-4': !isVisible }"
                 style="transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.4s">
-                <div class="relative">
+                <div class="relative min-h-[200px]">
                     <div v-for="(testimonial, index) in testimonials" :key="index"
                         class="absolute w-full transition-all duration-500"
                         :class="index === currentTestimonial ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'">
@@ -83,11 +86,11 @@ onMounted(() => {
                 </div>
             </div>
 
-            <div class="flex justify-center mt-1 space-x-2">
+            <div class="flex justify-center mt-8 space-x-2">
                 <button v-for="(_, index) in testimonials" :key="index"
                     class="w-3 h-3 rounded-full transition-all duration-300"
                     :class="index === currentTestimonial ? 'bg-orange-500' : 'bg-gray-300'"
-                    @click="currentTestimonial = index">
+                    @click="currentTestimonial = index" :aria-label="`Go to testimonial ${index + 1}`">
                 </button>
             </div>
         </div>

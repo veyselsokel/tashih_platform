@@ -16,15 +16,11 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
-
+// İletişim Rotaları
 Route::get('/iletisim', [ContactController::class, 'index'])->name('contact.index');
 Route::post('/iletisim', [ContactController::class, 'store'])->name('contact.store');
 
-Route::get('/siir', function () {
-    return Inertia::render('PoemPage');
-})->name('poetry');
-
+// Statik Sayfalar
 Route::get('/hakkimizda', function () {
     return Inertia::render('AboutUs', [
         'title' => 'Hakkımızda'
@@ -35,15 +31,28 @@ Route::get('/hizmetlerimiz', function () {
     return Inertia::render('Services');
 })->name('services');
 
+// Blog Rotaları
+Route::prefix('blog')->name('blog.')->group(function () {
+    // Public rotalar
+    Route::get('/', [BlogController::class, 'index'])->name('index');
+    Route::get('/{slug}', [BlogController::class, 'show'])->name('show');
+
+    // Auth gerektiren rotalar
+    Route::middleware(['auth', 'verified'])->group(function () {
+        Route::get('/create/new', [BlogController::class, 'create'])->name('create');
+        Route::post('/', [BlogController::class, 'store'])->name('store');
+        Route::post('/draft', [BlogController::class, 'saveDraft'])->name('draft'); // Yeni eklenen
+        Route::get('/{slug}/edit', [BlogController::class, 'edit'])->name('edit');
+        Route::put('/{slug}', [BlogController::class, 'update'])->name('update');
+        Route::delete('/{slug}', [BlogController::class, 'destroy'])->name('destroy');
+    });
+});
+
 // Yetkilendirme Gerektiren Rotalar
 Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/api/dashboard-data', [DashboardController::class, 'getDashboardData'])->name('dashboard.data');
-
-    // Blog Yönetimi
-    Route::get('/blog/create', [BlogController::class, 'create'])->name('create-blog');
-    Route::post('/blog', [BlogController::class, 'store'])->name('blog.store');
 
     // Profil Yönetimi
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -54,14 +63,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/correction-requests', [CorrectionRequestController::class, 'index'])->name('correction-requests.index');
     Route::get('/correction-requests/{id}', [CorrectionRequestController::class, 'show'])->name('correction-requests.show');
     Route::post('/correction-requests', [CorrectionRequestController::class, 'store'])->name('correction-requests.store');
-});
-
-Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('posts.show');
-
-Route::middleware(['auth'])->group(function () {
-    Route::get('/blog/{slug}/edit', [BlogController::class, 'edit'])->name('blog.edit');
-    Route::put('/blog/{slug}', [BlogController::class, 'update'])->name('blog.update');
-    Route::delete('/blog/{slug}', [BlogController::class, 'destroy'])->name('blog.destroy');
 });
 
 require __DIR__ . '/auth.php';

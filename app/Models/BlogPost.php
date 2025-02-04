@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class BlogPost extends Model
 {
@@ -19,6 +20,7 @@ class BlogPost extends Model
         'meta_description',
         'tags',
         'is_published',
+        'is_draft',
         'published_at',
         'user_id'
     ];
@@ -27,13 +29,44 @@ class BlogPost extends Model
         'formatting' => 'array',
         'tags' => 'array',
         'is_published' => 'boolean',
+        'is_draft' => 'boolean',
         'published_at' => 'datetime'
     ];
+
+    protected $appends = ['featured_image_url'];
+
+    // Başlık değiştiğinde otomatik slug oluşturma
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($post) {
+            if ($post->title) {
+                $post->slug = $post->generateUniqueSlug($post->title);
+            }
+        });
+
+        static::updating(function ($post) {
+            if ($post->isDirty('title')) {
+                $post->slug = $post->generateUniqueSlug($post->title);
+            }
+        });
+    }
+
+    // Benzersiz slug oluşturma
+    protected function generateUniqueSlug($title)
+    {
+        $slug = Str::slug($title);
+        $count = static::whereRaw("slug RLIKE '^{$slug}(-[0-9]+)?$'")->count();
+        
+        return $count ? "{$slug}-{$count}" : $slug;
+    }
 
     // Yayınlanmış blog yazılarını getiren scope
     public function scopePublished($query)
     {
         return $query->where('is_published', true)
+                    ->where('is_draft', false)
                     ->whereNotNull('published_at')
                     ->orderBy('published_at', 'desc');
     }
@@ -41,13 +74,17 @@ class BlogPost extends Model
     // Taslak blog yazılarını getiren scope
     public function scopeDrafts($query)
     {
-        return $query->where('is_published', false)
-                    ->orWhereNull('published_at')
-                    ->orderBy('created_at', 'desc');
+        return $query->where('is_draft', true)
+                    ->orderBy('updated_at', 'desc');
     }
 
-    protected $appends = ['featured_image_url'];
+    // Kullanıcının blog yazılarını getiren scope
+    public function scopeByUser($query, $userId)
+    {
+        return $query->where('user_id', $userId);
+    }
 
+    // Öne çıkan görsel URL'i
     public function getFeaturedImageUrlAttribute()
     {
         if ($this->featured_image) {
@@ -56,8 +93,51 @@ class BlogPost extends Model
         return null;
     }
 
+    // İlişkiler
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    // Yardımcı metodlar
+    public function publish()
+    {
+        $this->update([
+            'is_published' => true,
+            'is_draft' => false,
+            'published_at' => now()
+        ]);
+    }
+
+    public function unpublish()
+    {
+        $this->update([
+            'is_published' => false,
+            'is_draft' => true,
+            'published_at' => null
+        ]);
+    }
+
+    public function saveDraft()
+    {
+        $this->update([
+            'is_draft' => true,
+            'is_published' => false
+        ]);
+    }
+
+    // Küçük resim URL'i (eğer implement edilecekse)
+    public function getThumbnailUrl($width = 300, $height = 200)
+    {
+        if ($this->featured_image) {
+            // Burada görsel işleme mantığı implement edilebilir
+            return Storage::url($this->featured_image);
+        }
+        return null;
+    }
+
+    public function gallery()
+    {
+        return $this->hasMany(BlogPostGallery::class)->orderBy('order');
     }
 }

@@ -46,7 +46,7 @@ const stats = [
     { value: '1000+', label: 'Tamamlanan Proje' },
     { value: '50+', label: 'Uzman Ekip' },
     { value: '98%', label: 'Müşteri Memnuniyeti' },
-    { value: '10+', label: 'Yıllık Deneyim' }
+    { value: '20+', label: 'Yıllık Deneyim' }
 ];
 </script>
 

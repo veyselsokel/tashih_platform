@@ -44,9 +44,9 @@ const currentYear = new Date().getFullYear();
                     <h4 class="text-sm font-semibold text-gray-900 uppercase tracking-wider">İletişim</h4>
                     <ul class="mt-4 space-y-2">
                         <li>
-                            <a href="mailto:info@tashih.com"
+                            <a href="mailto:info@tashih.tr"
                                 class="text-gray-600 hover:text-orange-500 transition-colors duration-300">
-                                info@tashih.com
+                                info@tashih.tr
                             </a>
                         </li>
                         <li>

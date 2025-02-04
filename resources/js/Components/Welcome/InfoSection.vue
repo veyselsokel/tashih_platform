@@ -67,7 +67,7 @@ const features = [
             </div>
 
             <div class="mt-16 text-center">
-                <Link href="/hizmetler-detay"
+                <Link href="/hizmetlerimiz"
                     class="inline-flex items-center rounded-md bg-orange-500 px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-orange-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-400 transition-colors duration-200">
                 Tüm Hizmetlerimizi İnceleyin
                 <svg class="ml-2 -mr-1 w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5"

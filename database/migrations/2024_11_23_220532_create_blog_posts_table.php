@@ -12,13 +12,14 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('slug')->unique();
-            $table->text('content');
-            $table->json('formatting')->nullable(); // Font, renk vb. özellikler için
+            $table->text('content')->nullable();
+            $table->json('formatting')->nullable();
             $table->string('featured_image')->nullable();
             $table->text('meta_description')->nullable();
             $table->json('tags')->nullable();
             $table->boolean('is_published')->default(false);
             $table->timestamp('published_at')->nullable();
+            $table->boolean('is_draft')->default(true);
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });

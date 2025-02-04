@@ -12,8 +12,19 @@ class Blog extends Model
     protected $fillable = [
         'title',
         'content',
-        'user_id',
+        'meta_description',
+        'tags',
+        'is_published',
+        'is_draft',
+        'user_id'
     ];
+    
+    protected $casts = [
+        'tags' => 'array',
+        'is_published' => 'boolean',
+        'is_draft' => 'boolean'
+    ];
+    
 
     public function user()
     {

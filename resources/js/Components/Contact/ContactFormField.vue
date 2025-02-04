@@ -23,6 +23,10 @@ defineProps({
     rows: {
         type: Number,
         default: 3
+    },
+    placeholder: {
+        type: String,
+        default: ''
     }
 });
 
@@ -31,14 +35,14 @@ const emit = defineEmits(['update:modelValue']);
 
 <template>
     <div class="col-span-1">
-        <label :for="id" class="block text-sm font-medium text-gray-700">{{ label }}</label>
-        <div class="mt-1 relative">
+        <label :for="id" class="block text-sm font-medium text-gray-700 mb-1">{{ label }}</label>
+        <div class="relative">
             <textarea v-if="type === 'textarea'" :id="id" :value="modelValue"
-                @input="emit('update:modelValue', $event.target.value)" :rows="rows" required class="block w-full px-4 py-3 text-gray-900 border border-gray-300 rounded-lg 
+                @input="emit('update:modelValue', $event.target.value)" :rows="rows" :placeholder="placeholder" class="block w-full px-4 py-3 text-gray-900 border border-gray-300 rounded-lg 
                        shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent 
                        transition-all duration-200 resize-none" :class="{ 'border-red-300': error }" />
             <input v-else :id="id" :type="type" :value="modelValue"
-                @input="emit('update:modelValue', $event.target.value)" required class="block w-full px-4 py-3 text-gray-900 border border-gray-300 rounded-lg 
+                @input="emit('update:modelValue', $event.target.value)" :placeholder="placeholder" class="block w-full px-4 py-3 text-gray-900 border border-gray-300 rounded-lg 
                        shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent 
                        transition-all duration-200" :class="{ 'border-red-300': error }" />
             <div v-if="error" class="absolute -bottom-5 left-0 text-red-500 text-sm">

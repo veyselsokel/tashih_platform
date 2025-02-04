@@ -30,7 +30,7 @@ const showingNavigationDropdown = ref(false);
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
                                     Dashboard
                                 </NavLink>
-                                <NavLink :href="route('create-blog')" :active="route().current('create-blog')">
+                                <NavLink :href="route('blog.create')" :active="route().current('blog.create')">
                                     Yeni Blog
                                 </NavLink>
                             </div>
@@ -103,7 +103,7 @@ const showingNavigationDropdown = ref(false);
                         <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
                             Dashboard
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('create-blog')" :active="route().current('create-blog')">
+                        <ResponsiveNavLink :href="route('blog.create')" :active="route().current('blog.create')">
                             Yeni Blog
                         </ResponsiveNavLink>
                     </div>
@@ -142,6 +142,17 @@ const showingNavigationDropdown = ref(false);
             <main>
                 <slot />
             </main>
+            <div v-if="$page.props.flash?.success"
+                class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center">
+                <span class="mr-2">✓</span>
+                {{ $page.props.flash.success }}
+            </div>
+
+            <div v-if="$page.props.flash?.error"
+                class="fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center">
+                <span class="mr-2">⚠</span>
+                {{ $page.props.flash.error }}
+            </div>
         </div>
     </div>
 </template>
