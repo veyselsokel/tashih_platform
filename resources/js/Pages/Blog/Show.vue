@@ -5,7 +5,18 @@ import { Calendar, Clock, User, Tag, Share2, ArrowLeft } from 'lucide-vue-next';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import { ref, onMounted } from 'vue';
 import MarkdownIt from 'markdown-it';
+import ImageLightbox from './ImageLightbox.vue';
 
+const showLightbox = ref(false);
+const selectedImageIndex = ref(0);
+
+// Lightbox'ı açan fonksiyon
+const openLightbox = (index) => {
+    if (props.post.gallery && props.post.gallery.length > 0) {
+        selectedImageIndex.value = index;
+        showLightbox.value = true;
+    }
+};
 // Markdown yapılandırması
 const md = new MarkdownIt({
     html: true,
@@ -13,10 +24,22 @@ const md = new MarkdownIt({
     linkify: true,
     typographer: true,
     quotes: '""\'\'',
-})
+});
 
+md.renderer.rules.html_inline = (tokens, idx) => {
+    return tokens[idx].content;
+};
+
+md.renderer.rules.html_block = (tokens, idx) => {
+    return tokens[idx].content;
+};
 // Markdown kurallarını özelleştir
-md.renderer.rules.paragraph_open = () => '<p class="mb-4">';
+// Satır sonu işlemesini özelleştirelim
+md.renderer.rules.softbreak = () => '\n';
+md.renderer.rules.hardbreak = () => '\n';
+
+// Paragraf işleme kurallarını güncelleyelim
+md.renderer.rules.paragraph_open = () => '<p class="whitespace-pre-line mb-4">';
 md.renderer.rules.heading_open = (tokens, idx) => {
     const level = tokens[idx].tag;
     const classes = {
@@ -208,19 +231,38 @@ onMounted(() => {
                 <h3 class="text-2xl font-bold text-gray-900">Galeri</h3>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div v-for="image in post.gallery" :key="image.id"
-                        class="group relative overflow-hidden rounded-lg shadow-lg aspect-w-16 aspect-h-9">
-                        <img :src="image.image_url" :alt="image.alt_text"
-                            class="w-full h-full object-cover transition duration-300 group-hover:scale-105" />
+                    <div v-for="(image, index) in post.gallery" :key="image.id"
+                        class="group relative overflow-hidden rounded-lg shadow-lg cursor-pointer hover:shadow-xl transition-all"
+                        @click="openLightbox(index)">
+                        <div class="aspect-w-16 aspect-h-9">
+                            <img :src="image.image_url" :alt="image.alt_text"
+                                class="w-full h-full object-cover transition duration-300 group-hover:scale-105" />
+                        </div>
 
-                        <div v-if="image.caption"
+                        <div
                             class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                             <div class="absolute bottom-0 left-0 right-0 p-4">
                                 <p class="text-white text-sm">{{ image.caption }}</p>
                             </div>
                         </div>
+
+                        <!-- Zoom Icon -->
+                        <div
+                            class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div class="bg-black/50 p-3 rounded-full">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
+                                </svg>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Lightbox Component -->
+                <ImageLightbox :images="post.gallery" :is-open="showLightbox" :initial-index="selectedImageIndex"
+                    @close="showLightbox = false" />
             </div>
 
             <!-- Share Section -->
@@ -327,6 +369,20 @@ onMounted(() => {
     transform: scale(1.05);
 }
 
+.aspect-w-16.aspect-h-9 {
+    position: relative;
+    padding-top: 56.25%;
+}
+
+.aspect-w-16.aspect-h-9 img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 :deep(.blog-content) {
     /* Base styles */
     max-width: none;
@@ -346,7 +402,9 @@ onMounted(() => {
 
     /* Text elements */
     p {
-        @apply text-gray-700 leading-relaxed mb-6 whitespace-pre-wrap;
+        @apply text-gray-700 leading-relaxed mb-6;
+        white-space: pre-line;
+        /* Bu önemli */
     }
 
     strong {

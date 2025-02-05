@@ -12,8 +12,14 @@ import {
     ListOrdered,
     Quote,
     Code,
-    Link
+    Link,
+    Music,
+    Monitor,
+    Layout, // LayoutTemplate yerine Layout kullanıyoruz
+    Palette,
+    TextSelect
 } from 'lucide-vue-next';
+import AdvancedFormattingToolbar from './AdvancedFormattingToolbar.vue';
 import TextStyleControls from './TextStyleControls.vue';
 import MarkdownControls from './MarkdownControls.vue';
 
@@ -22,26 +28,35 @@ const props = defineProps({
         type: Object,
         required: true
     },
+    content: {
+        type: String,
+        default: ''
+    },
     onFormatText: {
         type: Function,
         required: true
     }
 });
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', 'update:content']);
 
 const tabs = ref([
+    { id: 'advanced', label: 'Gelişmiş Düzenleme', icon: Layout },
     { id: 'text-style', label: 'Metin Stili', icon: Type },
     { id: 'markdown', label: 'Markdown', icon: Code }
 ]);
 
-const activeTab = ref('text-style');
+const activeTab = ref('text-style'); // varsayılan olarak text-style sekmesini aktif yapıyoruz
 
 const updateFormatting = (key, value) => {
     emit('update:modelValue', {
         ...props.modelValue,
         [key]: value
     });
+};
+
+const handleContentUpdate = (newContent) => {
+    emit('update:content', newContent);
 };
 </script>
 
@@ -63,11 +78,18 @@ const updateFormatting = (key, value) => {
         </nav>
 
         <!-- Tab Panels -->
-        <div class="tab-content bg-white rounded-lg p-10">
-            <TextStyleControls v-show="activeTab === 'text-style'" :formatting="modelValue"
+        <div class="tab-content bg-white rounded-lg p-6">
+            <!-- Gelişmiş Düzenleme Paneli -->
+            <AdvancedFormattingToolbar v-if="activeTab === 'advanced'" :modelValue="modelValue" :content="content"
+                @update:modelValue="emit('update:modelValue', $event)" @update:content="handleContentUpdate"
+                @format="onFormatText" />
+
+            <!-- Metin Stili Paneli -->
+            <TextStyleControls v-if="activeTab === 'text-style'" :formatting="modelValue"
                 @update:formatting="updateFormatting" />
 
-            <MarkdownControls v-show="activeTab === 'markdown'" :formatting="modelValue" @format="onFormatText" />
+            <!-- Markdown Paneli -->
+            <MarkdownControls v-if="activeTab === 'markdown'" :formatting="modelValue" @format="onFormatText" />
         </div>
     </div>
 </template>
@@ -75,5 +97,9 @@ const updateFormatting = (key, value) => {
 <style scoped>
 .formatting-toolbar {
     @apply bg-white border rounded-lg shadow-sm overflow-hidden;
+}
+
+.tab-content>div {
+    @apply transition-all duration-200 ease-in-out;
 }
 </style>

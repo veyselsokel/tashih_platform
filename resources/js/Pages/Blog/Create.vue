@@ -1,6 +1,6 @@
 // pages/Blog/Create.vue
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue';
 import { useForm, usePage } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import FormattingToolbar from './FormattingToolbar.vue';
@@ -57,6 +57,33 @@ const handleFormatText = (formatter) => {
 
     form.content = form.content.substring(0, start) + formattedText + form.content.substring(end);
 };
+
+const handleEnterKey = (e) => {
+    // Eğer Shift+Enter basılırsa 2 satır boşluk bırak (paragraf)
+    if (e.shiftKey) {
+        e.preventDefault();
+        const cursorPosition = e.target.selectionStart;
+        const contentBefore = form.content.substring(0, cursorPosition);
+        const contentAfter = form.content.substring(e.target.selectionEnd);
+
+        form.content = contentBefore + '\n\n' + contentAfter;
+        nextTick(() => {
+            e.target.selectionStart = e.target.selectionEnd = cursorPosition + 2;
+        });
+    } else {
+        // Normal enter - sadece tek satır boşluk
+        e.preventDefault();
+        const cursorPosition = e.target.selectionStart;
+        const contentBefore = form.content.substring(0, cursorPosition);
+        const contentAfter = form.content.substring(e.target.selectionEnd);
+
+        form.content = contentBefore + '\n' + contentAfter;
+        nextTick(() => {
+            e.target.selectionStart = e.target.selectionEnd = cursorPosition + 1;
+        });
+    }
+};
+
 
 const startAutoSave = () => {
     autoSave.value = setInterval(() => {
@@ -154,14 +181,14 @@ onUnmounted(() => {
 
                                 <div v-if="!showMarkdownPreview">
                                     <textarea id="content-editor" v-model="form.content" rows="10"
-                                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 whitespace-pre-wrap"
+                                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500"
                                         :style="{
                                             fontFamily: form.formatting.font,
                                             fontSize: form.formatting.fontSize,
                                             textAlign: form.formatting.textAlign,
                                             color: form.formatting.color,
                                             lineHeight: form.formatting.lineHeight
-                                        }" required></textarea>
+                                        }" @keydown.enter="handleEnterKey" required></textarea>
                                 </div>
                                 <MarkdownPreview v-else :content="form.content" :formatting="form.formatting" />
 

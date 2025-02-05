@@ -36,12 +36,26 @@ class BlogController extends Controller
             'title' => 'required|string|max:255',
             'content' => 'required|string',
             'formatting' => 'nullable|array',
+            'formatting.font' => 'nullable|string',
+            'formatting.fontSize' => 'nullable|string',
+            'formatting.lineHeight' => 'nullable|string',
+            'formatting.textAlign' => 'nullable|string',
+            'formatting.color' => 'nullable|string',
             'featured_image' => 'nullable|image|max:2048',
             'meta_description' => 'nullable|string|max:255',
             'tags' => 'nullable|array',
             'is_published' => 'boolean',
             'gallery' => 'nullable|array'
         ]);
+    
+        // Varsayılan format değerlerini ayarla
+        $validated['formatting'] = array_merge([
+            'font' => 'Arial, sans-serif',
+            'fontSize' => '16px',
+            'lineHeight' => '1.5',
+            'textAlign' => 'left',
+            'color' => '#000000'
+        ], $validated['formatting'] ?? []);
 
         // Slug oluştur
         $validated['slug'] = Str::slug($validated['title']);
@@ -115,11 +129,21 @@ class BlogController extends Controller
             'title' => 'required|string|max:255',
             'content' => 'required|string',
             'formatting' => 'nullable|array',
+            'formatting.font' => 'nullable|string',
+            'formatting.fontSize' => 'nullable|string',
+            'formatting.lineHeight' => 'nullable|string',
+            'formatting.textAlign' => 'nullable|string',
+            'formatting.color' => 'nullable|string',
             'featured_image' => 'nullable|image|max:2048',
             'meta_description' => 'nullable|string|max:255',
             'tags' => 'nullable|array',
             'is_published' => 'boolean'
         ]);
+    
+        $validated['formatting'] = array_merge(
+            $post->formatting ?? [],
+            $validated['formatting'] ?? []
+        );
 
         if ($request->hasFile('featured_image')) {
             $path = $request->file('featured_image')->store('blog', 'public');
@@ -142,11 +166,24 @@ class BlogController extends Controller
                 'title' => 'required|string|max:255',
                 'content' => 'nullable|string',
                 'formatting' => 'nullable|array',
+                'formatting.font' => 'nullable|string',
+                'formatting.fontSize' => 'nullable|string',
+                'formatting.lineHeight' => 'nullable|string',
+                'formatting.textAlign' => 'nullable|string',
+                'formatting.color' => 'nullable|string',
                 'meta_description' => 'nullable|string|max:160',
                 'tags' => 'nullable|array',
                 'featured_image' => 'nullable|image|max:2048',
                 'gallery' => 'nullable|array'
             ]);
+
+            $validated['formatting'] = array_merge([
+                'font' => 'Arial, sans-serif',
+                'fontSize' => '16px',
+                'lineHeight' => '1.5',
+                'textAlign' => 'left',
+                'color' => '#000000'
+            ], $validated['formatting'] ?? []);
     
             // Slug oluşturma
             $slug = Str::slug($request->title);

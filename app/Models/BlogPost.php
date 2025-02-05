@@ -26,12 +26,27 @@ class BlogPost extends Model
     ];
 
     protected $casts = [
-        'formatting' => 'array',
+        'formatting' => 'json',
         'tags' => 'array',
         'is_published' => 'boolean',
         'is_draft' => 'boolean',
         'published_at' => 'datetime'
     ];
+    
+    public function getFormattedContentAttribute()
+    {
+        $formatting = $this->formatting ?? [];
+        return [
+            'content' => $this->content,
+            'formatting' => [
+                'font' => $formatting['font'] ?? 'Arial, sans-serif',
+                'fontSize' => $formatting['fontSize'] ?? '16px',
+                'lineHeight' => $formatting['lineHeight'] ?? '1.5',
+                'textAlign' => $formatting['textAlign'] ?? 'left',
+                'color' => $formatting['color'] ?? '#000000',
+            ]
+        ];
+    }
 
     protected $appends = ['featured_image_url'];
 
