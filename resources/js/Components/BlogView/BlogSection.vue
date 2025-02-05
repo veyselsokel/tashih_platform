@@ -28,13 +28,26 @@ const allTags = computed(() => {
 
 // Filtrelenmiş postlar
 const filteredPosts = computed(() => {
-    return props.posts.data.filter(post => {
+    let posts = props.posts.data.filter(post => {
         const matchesSearch = post.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
             post.meta_description?.toLowerCase().includes(searchQuery.value.toLowerCase());
         const matchesTag = !selectedTag.value || (post.tags && post.tags.includes(selectedTag.value));
         return matchesSearch && matchesTag;
     });
+
+    // Sıralama
+    return posts.sort((a, b) => {
+        switch (sortBy.value) {
+            case 'oldest':
+                return new Date(a.published_at || a.created_at) - new Date(b.published_at || b.created_at);
+            case 'title':
+                return a.title.localeCompare(b.title);
+            default: // newest
+                return new Date(b.published_at || b.created_at) - new Date(a.published_at || a.created_at);
+        }
+    });
 });
+
 
 const formatDate = (date) => {
     return new Date(date).toLocaleDateString('tr-TR', {
@@ -56,28 +69,70 @@ const getReadingTime = (content) => {
     <section class="py-16 sm:py-24">
         <div class="container mx-auto px-4">
             <!-- Filtreler ve Arama -->
-            <div class="mb-12 space-y-6">
-                <div class="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between">
-                    <!-- Arama -->
-                    <div class="relative flex-1 max-w-md">
-                        <Search class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-                        <input type="text" v-model="searchQuery" placeholder="Blog yazılarında ara..."
-                            class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200" />
-                    </div>
+            <div class="mb-12">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <!-- Arama Başlığı -->
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Blog Yazıları</h2>
 
-                    <!-- Etiket Filtresi -->
-                    <div class="flex gap-2 overflow-x-auto pb-2 md:pb-0">
-                        <button v-for="tag in allTags" :key="tag" @click="selectedTag = selectedTag === tag ? '' : tag"
-                            :class="[
-                                'px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors',
-                                selectedTag === tag
-                                    ? 'bg-orange-500 text-white'
-                                    : 'bg-orange-100 text-orange-800 hover:bg-orange-200'
-                            ]">
-                            {{ tag }}
-                        </button>
+                    <div class="space-y-6">
+                        <!-- Arama Alanı -->
+                        <div class="relative">
+                            <div class="flex items-center bg-gray-50 rounded-lg p-2">
+                                <Search class="text-gray-400 h-5 w-5 ml-2" />
+                                <input type="text" v-model="searchQuery" placeholder="Blog yazılarında ara..."
+                                    class="w-full px-4 py-2 bg-transparent border-none focus:ring-0 text-gray-700 placeholder-gray-400" />
+                            </div>
+                        </div>
+
+                        <!-- Filtreler -->
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-sm font-medium text-gray-700">Etiketler</h3>
+                                <button v-if="selectedTag" @click="selectedTag = ''"
+                                    class="text-sm text-orange-600 hover:text-orange-700">
+                                    Filtreleri Temizle
+                                </button>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <button v-for="tag in allTags" :key="tag"
+                                    @click="selectedTag = selectedTag === tag ? '' : tag" :class="[
+                                        'px-4 py-2 rounded-full text-sm font-medium transition-all duration-200',
+                                        selectedTag === tag
+                                            ? 'bg-orange-500 text-white shadow-md transform scale-105'
+                                            : 'bg-orange-50 text-orange-700 hover:bg-orange-100'
+                                    ]">
+                                    <div class="flex items-center space-x-1">
+                                        <Tag class="h-3.5 w-3.5" />
+                                        <span>{{ tag }}</span>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Sonuç Sayısı -->
+                        <div class="pt-4 border-t border-gray-100">
+                            <p class="text-sm text-gray-600">
+                                {{ filteredPosts.length }} yazı bulundu
+                                <span v-if="selectedTag">
+                                    "{{ selectedTag }}" etiketi için
+                                </span>
+                                <span v-if="searchQuery">
+                                    "{{ searchQuery }}" araması için
+                                </span>
+                            </p>
+                        </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Sıralama -->
+            <div class="mb-6 flex justify-end">
+                <select v-model="sortBy"
+                    class="border-gray-300 rounded-lg text-sm focus:border-orange-500 focus:ring-orange-500">
+                    <option value="newest">En Yeni</option>
+                    <option value="oldest">En Eski</option>
+                    <option value="title">Başlığa Göre</option>
+                </select>
             </div>
 
             <!-- Blog Grid -->
@@ -166,3 +221,21 @@ const getReadingTime = (content) => {
         </div>
     </section>
 </template>
+
+<style scoped>
+/* Etiket hover efekti */
+.tag-button {
+    transition: all 0.2s ease;
+}
+
+.tag-button:hover {
+    transform: translateY(-1px);
+}
+
+/* Input focus efekti */
+input:focus {
+    box-shadow: none;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+}
+</style>
