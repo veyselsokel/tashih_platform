@@ -5,8 +5,14 @@ import ContactHeader from '@/Components/Contact/ContactHeader.vue';
 import { Phone, Mail, MapPin } from 'lucide-vue-next';
 
 defineProps({
-    canLogin: Boolean,
-    canRegister: Boolean,
+    posts: {
+        type: Object,
+        default: () => ({})
+    },
+    title: {
+        type: String,
+        default: 'İletişim'
+    }
 });
 </script>
 

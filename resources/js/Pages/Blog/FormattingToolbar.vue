@@ -21,7 +21,6 @@ import {
 } from 'lucide-vue-next';
 import AdvancedFormattingToolbar from './AdvancedFormattingToolbar.vue';
 import TextStyleControls from './TextStyleControls.vue';
-import MarkdownControls from './MarkdownControls.vue';
 
 const props = defineProps({
     modelValue: {
@@ -43,7 +42,6 @@ const emit = defineEmits(['update:modelValue', 'update:content']);
 const tabs = ref([
     { id: 'advanced', label: 'Gelişmiş Düzenleme', icon: Layout },
     { id: 'text-style', label: 'Metin Stili', icon: Type },
-    { id: 'markdown', label: 'Markdown', icon: Code }
 ]);
 
 const activeTab = ref('text-style'); // varsayılan olarak text-style sekmesini aktif yapıyoruz
@@ -87,9 +85,6 @@ const handleContentUpdate = (newContent) => {
             <!-- Metin Stili Paneli -->
             <TextStyleControls v-if="activeTab === 'text-style'" :formatting="modelValue"
                 @update:formatting="updateFormatting" />
-
-            <!-- Markdown Paneli -->
-            <MarkdownControls v-if="activeTab === 'markdown'" :formatting="modelValue" @format="onFormatText" />
         </div>
     </div>
 </template>

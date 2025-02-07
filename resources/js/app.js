@@ -5,8 +5,8 @@ import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createApp, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
-import VueTyper from 'vue3-typer'; // Vue3Typer kütüphanesi
-import 'vue3-typer/dist/vue-typer.css'; // CSS dosyasını dahil edin
+import VueTyper from 'vue3-typer';
+import 'vue3-typer/dist/vue-typer.css';
 
 const appName = import.meta.env.VITE_APP_NAME;
 

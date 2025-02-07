@@ -11,11 +11,11 @@ const props = defineProps({
     },
     canLogin: {
         type: Boolean,
-        default: false
+        default: true
     },
     canRegister: {
         type: Boolean,
-        default: false
+        default: true
     }
 });
 

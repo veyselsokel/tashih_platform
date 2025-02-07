@@ -1,23 +1,9 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import {
-    Type,
-    AlignLeft,
-    AlignCenter,
-    AlignRight,
-    Bold,
-    Italic,
-    Underline,
-    List,
-    ListOrdered,
-    Quote,
-    Code,
-    Link,
-    Music,
-    Palette,
-    TextSelect,
-    LayoutTemplate,
-    Monitor
+    Type, AlignLeft, AlignCenter, AlignRight, Bold, Italic,
+    Underline, List, ListOrdered, Quote, Code, Link, Music,
+    Palette, TextSelect, LayoutTemplate, Monitor
 } from 'lucide-vue-next';
 
 const props = defineProps({
@@ -36,32 +22,33 @@ const showColorPicker = ref(false);
 const activeContentType = ref('normal');
 const showPreview = ref(false);
 const selectedText = ref('');
+const isMobileView = ref(window.innerWidth < 768);
+
+const handleResize = () => {
+    isMobileView.value = window.innerWidth < 768;
+};
+
+onMounted(() => {
+    document.addEventListener('selectionchange', updateSelectedText);
+    window.addEventListener('resize', handleResize);
+});
+
+onUnmounted(() => {
+    document.removeEventListener('selectionchange', updateSelectedText);
+    window.removeEventListener('resize', handleResize);
+});
 
 const updateSelectedText = () => {
     selectedText.value = document?.getSelection()?.toString() || '';
 };
 
-// Component oluşturulduğunda event listener ekleyelim
-onMounted(() => {
-    document.addEventListener('selectionchange', updateSelectedText);
-});
-
-// Component kaldırıldığında event listener'ı temizleyelim
-onUnmounted(() => {
-    document.removeEventListener('selectionchange', updateSelectedText);
-});
-
-// Renk değiştirme fonksiyonunu güncelleyelim
 const handleColorChange = (color) => {
     if (selectedText.value) {
-        // Seçili metin varsa, renk formatını uygula
         handleFormat((text) => `<span style="color: ${color}">${text}</span>`);
     } else {
-        // Seçili metin yoksa, tüm metin rengini değiştir
         updateStyle('color', color);
     }
 };
-
 const contentTypes = [
     { id: 'normal', label: 'Normal Metin', icon: Type },
     { id: 'poem', label: 'Şiir', icon: Music },
@@ -234,50 +221,48 @@ const handleFormat = (formatter) => {
 
 <template>
     <div class="formatting-toolbar space-y-4">
-        <!-- İçerik Türü Seçici -->
-        <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
-            <span class="text-sm font-medium text-gray-700">İçerik Türü:</span>
-            <div class="flex space-x-2">
-                <button v-for="type in contentTypes" :key="type.id" @click="applyContentType(type.id)" :class="[
-                    'flex items-center px-3 py-1.5 rounded-md transition-colors',
-                    activeContentType === type.id
-                        ? 'bg-orange-100 text-orange-700'
-                        : 'bg-white hover:bg-gray-100'
-                ]">
-                    <component :is="type.icon" class="w-4 h-4 mr-2" />
-                    <span class="text-sm">{{ type.label }}</span>
-                </button>
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 p-4 bg-gray-50 rounded-lg">
+            <div class="flex items-center gap-2">
+                <span class="text-sm font-medium text-gray-700 whitespace-nowrap">İçerik Türü:</span>
+                <div class="flex flex-wrap gap-2">
+                    <button v-for="type in contentTypes" :key="type.id" @click="applyContentType(type.id)" :class="[
+                        'flex items-center px-3 py-1.5 rounded-md transition-colors min-w-[100px] justify-center',
+                        activeContentType === type.id
+                            ? 'bg-orange-100 text-orange-700'
+                            : 'bg-white hover:bg-gray-100'
+                    ]">
+                        <component :is="type.icon" class="w-4 h-4 mr-2" />
+                        <span class="text-sm">{{ type.label }}</span>
+                    </button>
+                </div>
             </div>
             <button @click="showPreview = !showPreview"
-                class="ml-auto flex items-center px-3 py-1.5 rounded-md bg-white hover:bg-gray-100">
+                class="sm:ml-auto flex items-center justify-center px-3 py-1.5 rounded-md bg-white hover:bg-gray-100">
                 <Monitor class="w-4 h-4 mr-2" />
                 <span class="text-sm">{{ showPreview ? 'Düzenle' : 'Önizle' }}</span>
             </button>
         </div>
 
-        <!-- Metin Formatı Araçları -->
-        <div class="grid grid-cols-2 gap-4 p-4 border rounded-lg">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 p-4 border rounded-lg">
             <div class="space-y-4">
-                <!-- Font ve Boyut -->
-                <div class="flex space-x-2">
+                <div class="flex flex-col sm:flex-row gap-2">
                     <select :value="modelValue.font" @change="updateStyle('font', $event.target.value)"
-                        class="flex-1 rounded-md border-gray-300 text-sm">
+                        class="rounded-md border-gray-300 text-sm flex-1">
                         <option v-for="font in fontOptions" :key="font.value" :value="font.value">
                             {{ font.label }}
                         </option>
                     </select>
                     <select :value="modelValue.fontSize" @change="updateStyle('fontSize', $event.target.value)"
-                        class="flex-1 rounded-md border-gray-300 text-sm">
+                        class="rounded-md border-gray-300 text-sm flex-1">
                         <option v-for="size in fontSizeOptions" :key="size.value" :value="size.value">
                             {{ size.label }}
                         </option>
                     </select>
                 </div>
 
-                <!-- Satır Aralığı -->
-                <div class="flex items-center space-x-2">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2">
                     <TextSelect class="w-4 h-4 text-gray-500" />
-                    <div class="flex-1 grid grid-cols-4 gap-1">
+                    <div class="flex-1 grid grid-cols-2 sm:grid-cols-4 gap-1">
                         <button v-for="option in lineHeightOptions" :key="option.value"
                             @click="updateStyle('lineHeight', option.value)" :class="[
                                 'px-2 py-1 text-xs rounded transition-colors',
@@ -292,25 +277,22 @@ const handleFormat = (formatter) => {
             </div>
 
             <div class="space-y-4">
-                <!-- Hizalama -->
                 <div class="flex justify-center space-x-1">
                     <button v-for="align in ['left', 'center', 'right']" :key="align"
                         @click="updateStyle('textAlign', align)" :class="[
-                            'p-2 rounded-md transition-colors',
+                            'p-2 rounded-md transition-colors flex-1',
                             modelValue.textAlign === align
                                 ? 'bg-orange-100 text-orange-700'
                                 : 'bg-gray-100 hover:bg-gray-200'
                         ]">
-                        <component :is="align === 'left' ? AlignLeft :
-                            align === 'center' ? AlignCenter : AlignRight
-                            " class="w-4 h-4" />
+                        <component :is="align === 'left' ? AlignLeft : align === 'center' ? AlignCenter : AlignRight"
+                            class="w-4 h-4 mx-auto" />
                     </button>
                 </div>
 
-                <!-- Renk Seçici -->
-                <div class="relative">
+                <div class="color-picker-container">
                     <div class="p-2 rounded-lg bg-gray-50">
-                        <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center justify-between mb-2 flex-wrap gap-2">
                             <span class="text-sm font-medium text-gray-700">Metin Rengi</span>
                             <div class="flex items-center space-x-2">
                                 <div class="w-6 h-6 rounded border" :style="{ backgroundColor: modelValue.color }">
@@ -319,7 +301,6 @@ const handleFormat = (formatter) => {
                             </div>
                         </div>
 
-                        <!-- Önceden tanımlı renkler -->
                         <div class="grid grid-cols-5 gap-2">
                             <button v-for="color in presetColors" :key="color.value"
                                 @click="handleColorChange(color.value)"
@@ -333,12 +314,10 @@ const handleFormat = (formatter) => {
                             </button>
                         </div>
 
-                        <!-- Özel renk seçici -->
                         <div class="mt-3 flex items-center gap-3">
-                            <div class="flex">
+                            <div class="flex flex-1">
                                 <input type="color" :value="modelValue.color"
-                                    @input="handleColorChange($event.target.value)"
-                                    class="w-8 h-8 rounded cursor-pointer" />
+                                    @input="handleColorChange($event.target.value)" class="custom-color-input" />
                                 <div class="ml-2">
                                     <span class="text-xs font-medium text-gray-700">Özel Renk</span>
                                     <div class="text-xs text-gray-500">
@@ -349,11 +328,9 @@ const handleFormat = (formatter) => {
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
 
-        <!-- Format Araçları -->
         <div class="flex flex-wrap gap-2 p-4 border rounded-lg">
             <button v-for="tool in formatTools" :key="tool.label" @click="handleFormat(tool.action)"
                 class="format-tool group relative">
@@ -369,23 +346,23 @@ const handleFormat = (formatter) => {
     </div>
 </template>
 
+
 <style scoped>
 .format-tool {
     @apply relative;
 }
 
 .tooltip {
-    @apply invisible opacity-0 absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded flex flex-col items-center whitespace-nowrap transition-all duration-200;
+    @apply invisible opacity-0 absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded flex flex-col items-center whitespace-nowrap transition-all duration-200 z-50;
 }
 
 .format-tool:hover .tooltip {
     @apply visible opacity-100;
 }
 
-/* Özel içerik türü stilleri */
 :deep(.poem-content) {
-    @apply font-serif text-lg leading-relaxed text-center;
-    white-space: pre-wrap;
+    @apply font-serif text-lg leading-relaxed text-center whitespace-pre-wrap;
+    padding: 0 2rem;
 }
 
 :deep(.code-content) {
@@ -393,110 +370,58 @@ const handleFormat = (formatter) => {
 }
 
 :deep(.quote-content) {
-    @apply font-serif text-lg leading-relaxed italic border-l-4 border-orange-500 pl-4;
-}
-
-:deep(.poem-content) {
-    white-space: pre-wrap;
-    text-align: center;
-    padding-left: 2rem;
-    padding-right: 2rem;
-}
-
-/* Kod formatı için ek stiller */
-:deep(.code-content) {
-    font-family: 'Courier New', monospace;
-    background-color: #f6f8fa;
-    padding: 1rem;
-    border-radius: 0.375rem;
-}
-
-/* Alıntı formatı için ek stiller */
-:deep(.quote-content) {
-    font-style: italic;
-    border-left: 4px solid #ed8936;
-    padding-left: 1rem;
-    margin: 1rem 0;
-}
-
-input[type="color"] {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    padding: 0;
-    width: 32px;
-    height: 32px;
-    border: 1px solid #e2e8f0;
-    border-radius: 6px;
-    overflow: hidden;
-}
-
-input[type="color"]::-webkit-color-swatch-wrapper {
-    padding: 0;
-}
-
-input[type="color"]::-webkit-color-swatch {
-    border: none;
-    border-radius: 4px;
-}
-
-input[type="color"]::-moz-color-swatch {
-    border: none;
-    border-radius: 4px;
-}
-
-/* Renk butonları için hover efekti */
-.color-btn {
-    transition: all 0.2s;
-}
-
-.color-btn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 0 0 2px rgba(237, 137, 54, 0.4);
-}
-
-.color-btn.active {
-    transform: scale(1.1);
-    box-shadow: 0 0 0 2px rgba(237, 137, 54, 1);
+    @apply font-serif text-lg leading-relaxed italic border-l-4 border-orange-500 pl-4 my-4;
 }
 
 .custom-color-input {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    background: none;
-    border: 1px solid #e2e8f0;
-    border-radius: 6px;
-    padding: 0;
-    cursor: pointer;
+    @apply appearance-none bg-transparent border border-gray-300 rounded-md p-0 cursor-pointer w-8 h-8;
 }
 
-.custom-color-input::-webkit-color-swatch-wrapper {
-    padding: 0;
+input[type="color"] {
+    @apply appearance-none p-0 w-8 h-8 border border-gray-300 rounded-md overflow-hidden;
 }
 
-.custom-color-input::-webkit-color-swatch {
-    border: none;
-    border-radius: 4px;
+input[type="color"]::-webkit-color-swatch-wrapper {
+    @apply p-0;
 }
 
-.custom-color-input::-moz-color-swatch {
-    border: none;
-    border-radius: 4px;
+input[type="color"]::-webkit-color-swatch,
+input[type="color"]::-moz-color-swatch {
+    @apply border-none rounded;
 }
 
-/* Renk butonları için hover efekti */
 .color-btn {
-    transition: all 0.2s;
+    @apply transition-all duration-200;
+}
+
+.color-btn:hover,
+.color-btn.active {
+    @apply scale-110;
 }
 
 .color-btn:hover {
-    transform: scale(1.1);
     box-shadow: 0 0 0 2px rgba(237, 137, 54, 0.4);
 }
 
 .color-btn.active {
-    transform: scale(1.1);
     box-shadow: 0 0 0 2px rgba(237, 137, 54, 1);
+}
+
+@media (max-width: 640px) {
+    .formatting-toolbar {
+        @apply text-sm;
+    }
+
+    .color-picker-container {
+        @apply overflow-x-auto;
+    }
+
+    .format-tool {
+        @apply p-1.5;
+    }
+
+    .tooltip {
+        @apply hidden;
+    }
 }
 </style>

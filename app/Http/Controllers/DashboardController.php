@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\BlogPost;
-use App\Models\CorrectionRequest;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -11,41 +10,35 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $correctionRequests = CorrectionRequest::with('user')
+        $blogPosts = BlogPost::with(['user', 'gallery'])
+            ->where('user_id', auth()->id())
             ->latest()
-            ->take(5)
-            ->get();
-
-        $blogPosts = BlogPost::with('user')
-            ->latest()
-            ->take(5)
             ->get();
 
         return Inertia::render('Dashboard', [
-            'correctionRequests' => $correctionRequests,
             'blogPosts' => $blogPosts,
             'stats' => [
-                'totalRequests' => CorrectionRequest::count(),
-                'pendingRequests' => CorrectionRequest::pending()->count(),
-                'completedRequests' => CorrectionRequest::completed()->count(),
-                'publishedPosts' => BlogPost::published()->count(),
+                'totalPosts' => $blogPosts->count(),
+                'publishedPosts' => $blogPosts->where('is_published', true)->count(),
+                'draftPosts' => $blogPosts->where('is_draft', true)->count(),
             ],
         ]);
     }
 
     public function getDashboardData()
     {
-        $correctionRequests = CorrectionRequest::with('user')
-            ->latest()
-            ->get();
-
-        $blogPosts = BlogPost::with('user')
+        $blogPosts = BlogPost::with(['user', 'gallery'])
+            ->where('user_id', auth()->id())
             ->latest()
             ->get();
 
         return response()->json([
-            'correctionRequests' => $correctionRequests,
-            'blogPosts' => $blogPosts,
+            'posts' => $blogPosts,
+            'stats' => [
+                'totalPosts' => $blogPosts->count(),
+                'publishedPosts' => $blogPosts->where('is_published', true)->count(),
+                'draftPosts' => $blogPosts->where('is_draft', true)->count(),
+            ]
         ]);
     }
 }

@@ -114,8 +114,8 @@ onUnmounted(() => {
                 <h1 class="text-3xl sm:text-5xl font-bold tracking-tight leading-tight transition-all duration-800 ease-out"
                     :class="{ 'opacity-100 translate-y-0': isVisible, 'opacity-0 translate-y-4': !isVisible }">
                     <span class="relative inline-block">
-                        <VueTyper class="typer-text" text="TASHİH HİZMETLERİNE" erase-style="backspace"
-                            erase-delay="70" />
+                        <VueTyper class="typer-text" text="TASHİH HİZMETLERİNE" :erase-delay="70"
+                            erase-style="backspace" />
                         <div class="absolute bottom-0 left-0 w-full h-1 bg-orange-500 transform origin-left transition-transform duration-500"
                             :class="{ 'scale-x-100': isVisible, 'scale-x-0': !isVisible }">
                         </div>

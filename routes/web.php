@@ -41,7 +41,7 @@ Route::prefix('blog')->name('blog.')->group(function () {
     Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/create/new', [BlogController::class, 'create'])->name('create');
         Route::post('/', [BlogController::class, 'store'])->name('store');
-        Route::post('/draft', [BlogController::class, 'saveDraft'])->name('draft'); // Yeni eklenen
+        Route::post('/draft', [BlogController::class, 'saveDraft'])->name('draft');
         Route::get('/{slug}/edit', [BlogController::class, 'edit'])->name('edit');
         Route::put('/{slug}', [BlogController::class, 'update'])->name('update');
         Route::delete('/{slug}', [BlogController::class, 'destroy'])->name('destroy');

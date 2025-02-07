@@ -76,6 +76,16 @@ class BlogController extends Controller
             $validated['published_at'] = now();
         }
 
+        $validated['user_id'] = auth()->id();
+    
+        if ($validated['is_published']) {
+            $validated['published_at'] = now();
+            $validated['is_draft'] = false;
+        } else {
+            $validated['is_draft'] = true;
+            $validated['published_at'] = null;
+        }
+
         // Blog yazısını oluştur
         $blog = BlogPost::create($validated);
 
@@ -154,6 +164,14 @@ class BlogController extends Controller
             $validated['published_at'] = now();
         }
 
+        if ($validated['is_published']) {
+            $validated['published_at'] = now();
+            $validated['is_draft'] = false;
+        } else {
+            $validated['is_draft'] = true;
+            $validated['published_at'] = null;
+        }
+
         $post->update($validated);
 
         return redirect()->back()->with('success', 'Blog yazısı başarıyla güncellendi.');
@@ -162,7 +180,7 @@ class BlogController extends Controller
     public function saveDraft(Request $request)
     {
         try {
-            $request->validate([
+            $validated = $request->validate([
                 'title' => 'required|string|max:255',
                 'content' => 'nullable|string',
                 'formatting' => 'nullable|array',
@@ -196,7 +214,8 @@ class BlogController extends Controller
             $blog = BlogPost::updateOrCreate(
                 [
                     'user_id' => auth()->id(),
-                    'is_draft' => true
+                    'is_draft' => true,
+                    'is_published' => false
                 ],
                 [
                     'title' => $request->title,
@@ -206,7 +225,8 @@ class BlogController extends Controller
                     'meta_description' => $request->meta_description,
                     'tags' => $request->tags ?? [],
                     'is_published' => false,
-                    'is_draft' => true
+                    'is_draft' => true,
+                    'published_at' => null
                 ]
             );
     

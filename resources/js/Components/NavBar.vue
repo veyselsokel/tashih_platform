@@ -3,8 +3,14 @@ import { ref, onMounted, computed } from 'vue';
 import { Link } from '@inertiajs/vue3';
 
 const props = defineProps({
-    canLogin: Boolean,
-    canRegister: Boolean,
+    canLogin: {
+        type: Boolean,
+        default: true
+    },
+    canRegister: {
+        type: Boolean,
+        default: true
+    }
 });
 
 const isMenuOpen = ref(false);

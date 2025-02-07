@@ -26,7 +26,7 @@ class BlogPost extends Model
     ];
 
     protected $casts = [
-        'formatting' => 'json',
+        'formatting' => 'json', 
         'tags' => 'array',
         'is_published' => 'boolean',
         'is_draft' => 'boolean',
@@ -115,11 +115,20 @@ class BlogPost extends Model
     }
 
     // Yardımcı metodlar
+    public function saveDraft()
+    {
+       $this->update([
+           'is_draft' => true,
+           'is_published' => false,
+           'published_at' => null
+       ]);
+    }
+
     public function publish()
     {
         $this->update([
-            'is_published' => true,
             'is_draft' => false,
+            'is_published' => true,
             'published_at' => now()
         ]);
     }
@@ -127,17 +136,9 @@ class BlogPost extends Model
     public function unpublish()
     {
         $this->update([
+            'is_draft' => false,
             'is_published' => false,
-            'is_draft' => true,
             'published_at' => null
-        ]);
-    }
-
-    public function saveDraft()
-    {
-        $this->update([
-            'is_draft' => true,
-            'is_published' => false
         ]);
     }
 
