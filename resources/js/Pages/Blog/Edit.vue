@@ -6,7 +6,7 @@ import ImageUploader from './ImageUploader.vue';
 import TagManager from './TagManager.vue';
 import SeoPanel from './SeoPanel.vue';
 import MarkdownPreview from './MarkdownPreview.vue';
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 
 const props = defineProps({
     post: {
@@ -30,10 +30,20 @@ const form = useForm({
         color: '#000000'
     },
     featured_image: null,
+    current_featured_image: props.post.featured_image,
+    featured_image_url: props.post.featured_image_url,
     meta_description: props.post.meta_description || '',
     tags: props.post.tags || [],
     is_published: props.post.is_published || false,
-    gallery: props.post.gallery || []
+    gallery: props.post.gallery?.map(item => ({
+        id: item.id,
+        image: item.image,
+        image_url: item.image_url,
+        preview: item.image_url,
+        caption: item.caption || '',
+        alt_text: item.alt_text || '',
+        order: item.order
+    })) || []
 });
 
 const showMarkdownPreview = ref(false);
@@ -63,13 +73,67 @@ const handleFormatText = (formatter) => {
 };
 
 const submit = () => {
-    form.put(route('blog.update', props.post.slug), {
+    form._method = 'PUT';
+
+    const formData = new FormData();
+    formData.append('_method', 'PUT');
+    formData.append('title', form.title);
+    formData.append('content', form.content);
+    formData.append('formatting', JSON.stringify(form.formatting));
+    formData.append('meta_description', form.meta_description);
+    formData.append('tags', JSON.stringify(form.tags));
+    formData.append('is_published', form.is_published ? '1' : '0');
+
+    // Mevcut featured image'i koru
+    if (props.post.featured_image) {
+        formData.append('current_featured_image', props.post.featured_image);
+    }
+
+    // Yeni featured image varsa ekle
+    if (form.featured_image instanceof File) {
+        formData.append('featured_image', form.featured_image);
+    }
+
+    // Mevcut ve yeni galeri görsellerini ekle
+    if (form.gallery && form.gallery.length > 0) {
+        form.gallery.forEach((item, index) => {
+            if (item.id) {
+                // Mevcut galeri öğeleri
+                formData.append(`gallery[${index}][id]`, item.id);
+                formData.append(`gallery[${index}][image]`, item.image);
+                formData.append(`gallery[${index}][caption]`, item.caption || '');
+                formData.append(`gallery[${index}][alt_text]`, item.alt_text || '');
+                formData.append(`gallery[${index}][order]`, index);
+            } else if (item.file instanceof File) {
+                // Yeni yüklenen görseller
+                formData.append(`gallery[${index}][file]`, item.file);
+                formData.append(`gallery[${index}][caption]`, item.caption || '');
+                formData.append(`gallery[${index}][alt_text]`, item.alt_text || '');
+                formData.append(`gallery[${index}][order]`, index);
+            }
+        });
+    }
+
+    form.post(route('blog.update', props.post.slug), {
+        data: formData,
         preserveScroll: true,
+        forceFormData: true,
         onSuccess: () => {
-            // Başarılı güncelleme mesajı gösterilebilir
+            // Başarı mesajı
         },
     });
 };
+
+onMounted(() => {
+    if (props.post.gallery?.length) {
+        form.gallery = props.post.gallery.map(item => ({
+            ...item,
+            preview: item.image_url,
+            caption: item.caption || '',
+            altText: item.alt_text || ''
+        }));
+    }
+});
 </script>
 
 <template>
@@ -136,14 +200,15 @@ const submit = () => {
 
                             <!-- Görsel Yükleyici -->
                             <ImageUploader v-model:featured-image="form.featured_image" v-model:gallery="form.gallery"
-                                :preview="imagePreview" />
+                                :preview="form.featured_image_url" :initial-gallery="form.gallery" />
 
                             <!-- Etiket Yöneticisi -->
                             <TagManager v-model="form.tags" />
 
                             <!-- SEO Paneli -->
                             <SeoPanel v-model:meta-description="form.meta_description" :title="form.title"
-                                :content="form.content" :tags="form.tags" :has-featured-image="!!form.featured_image" />
+                                :content="form.content" :tags="form.tags"
+                                :has-featured-image="!!form.current_featured_image || !!form.featured_image" />
 
                             <!-- Yayınlama Seçenekleri -->
                             <div class="flex items-center">

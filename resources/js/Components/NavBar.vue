@@ -22,7 +22,8 @@ const navigationItems = [
     'İletişim',
     'Blog',
     'Hakkımızda',
-    'Hizmetlerimiz'
+    'Hizmetlerimiz',
+    'Bulmacalar',
 ];
 
 const turkishToEnglish = (text) => {
@@ -45,6 +46,7 @@ const navClasses = computed(() => {
         'bg-transparent': !isScrolled.value,
         'shadow-none': !isScrolled.value
     }
+    console.log('deneme');
 });
 
 const handleScroll = () => {

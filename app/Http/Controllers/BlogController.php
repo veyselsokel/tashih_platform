@@ -134,36 +134,47 @@ class BlogController extends Controller
     public function update(Request $request, $slug)
     {
         $post = BlogPost::where('slug', $slug)->firstOrFail();
-
+    
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
             'formatting' => 'nullable|array',
-            'formatting.font' => 'nullable|string',
-            'formatting.fontSize' => 'nullable|string',
-            'formatting.lineHeight' => 'nullable|string',
-            'formatting.textAlign' => 'nullable|string',
-            'formatting.color' => 'nullable|string',
-            'featured_image' => 'nullable|image|max:2048',
             'meta_description' => 'nullable|string|max:255',
+            'formatting' => 'required|array',
+            'formatting.font' => 'required|string',
+            'formatting.fontSize' => 'required|string',
+            'formatting.lineHeight' => 'required|string',
+            'formatting.textAlign' => 'required|string',
+            'formatting.color' => 'required|string',
             'tags' => 'nullable|array',
-            'is_published' => 'boolean'
+            'is_published' => 'boolean',
+            'featured_image' => 'nullable|image|max:2048',
+            'current_featured_image' => 'nullable|string',
+            'gallery' => 'nullable|array'
         ]);
+    
+        $formatting = is_string($request->formatting) ? 
+            json_decode($request->formatting, true) : 
+            $request->formatting;
     
         $validated['formatting'] = array_merge(
             $post->formatting ?? [],
-            $validated['formatting'] ?? []
+            $formatting ?? []
         );
-
+    
+        // Featured image işle
         if ($request->hasFile('featured_image')) {
+            // Eski görseli sil
+            if ($post->featured_image) {
+                Storage::disk('public')->delete($post->featured_image);
+            }
             $path = $request->file('featured_image')->store('blog', 'public');
             $validated['featured_image'] = $path;
+        } else {
+            // Mevcut görseli koru
+            $validated['featured_image'] = $post->featured_image;
         }
-
-        if ($validated['is_published'] && !$post->published_at) {
-            $validated['published_at'] = now();
-        }
-
+    
         if ($validated['is_published']) {
             $validated['published_at'] = now();
             $validated['is_draft'] = false;
@@ -171,9 +182,53 @@ class BlogController extends Controller
             $validated['is_draft'] = true;
             $validated['published_at'] = null;
         }
-
+    
         $post->update($validated);
-
+    
+        // Galeri görsellerini güncelle
+        if ($request->has('gallery')) {
+            $galleryItems = [];
+            
+            foreach ($request->gallery as $index => $item) {
+                if (isset($item['id'])) {
+                    // Mevcut galeri öğelerini koru
+                    $galleryItems[] = [
+                        'id' => $item['id'],
+                        'image' => $item['image'],
+                        'caption' => $item['caption'] ?? '',
+                        'alt_text' => $item['alt_text'] ?? '',
+                        'order' => $index
+                    ];
+                } elseif (isset($item['file']) && $item['file'] instanceof UploadedFile) {
+                    // Yeni görselleri ekle
+                    $path = $item['file']->store('blog/gallery', 'public');
+                    $galleryItems[] = [
+                        'image' => $path,
+                        'caption' => $item['caption'] ?? '',
+                        'alt_text' => $item['alt_text'] ?? '',
+                        'order' => $index
+                    ];
+                }
+            }
+    
+            // Var olan galeriyi güncelle
+            $post->gallery()->delete();
+            foreach ($galleryItems as $item) {
+                if (isset($item['id'])) {
+                    // Mevcut galeri öğesini güncelle
+                    $post->gallery()->create([
+                        'image' => $item['image'],
+                        'caption' => $item['caption'],
+                        'alt_text' => $item['alt_text'],
+                        'order' => $item['order']
+                    ]);
+                } else {
+                    // Yeni galeri öğesi ekle
+                    $post->gallery()->create($item);
+                }
+            }
+        }
+    
         return redirect()->back()->with('success', 'Blog yazısı başarıyla güncellendi.');
     }
 

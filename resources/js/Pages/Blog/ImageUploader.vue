@@ -1,8 +1,8 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { compressImage } from '@/utils/imageProcessing';
 
-const props = defineProps({
+defineProps({
     featuredImage: {
         type: [File, null],
         default: null
@@ -14,12 +14,15 @@ const props = defineProps({
     preview: {
         type: String,
         default: null
+    },
+    initialGallery: { // Yeni prop
+        type: Array,
+        default: () => []
     }
 });
 
 const emit = defineEmits(['update:featuredImage', 'update:gallery']);
-
-const imageGallery = ref(props.gallery);
+const imageGallery = ref([]);
 
 const handleFeaturedImageUpload = async (e) => {
     const file = e.target.files[0];
@@ -74,6 +77,13 @@ const updateImageMeta = (index, field, value) => {
     imageGallery.value[index][field] = value;
     emit('update:gallery', imageGallery.value);
 };
+
+onMounted(() => {
+    if (props.initialGallery?.length) {
+        imageGallery.value = props.initialGallery;
+        emit('update:gallery', imageGallery.value);
+    }
+});
 </script>
 
 <template>
@@ -92,35 +102,31 @@ const updateImageMeta = (index, field, value) => {
         </div>
 
         <!-- Galeri -->
-        <div>
+        <div class="mt-4">
             <label class="mb-2 block text-sm font-medium text-gray-700">
                 Galeri Görselleri
             </label>
             <input type="file" @change="handleGalleryUpload" accept="image/*" multiple
                 class="w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500" />
 
-            <!-- Galeri Önizleme -->
-            <div class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-                <div v-for="(image, index) in imageGallery" :key="index" class="relative rounded-lg border p-2">
-                    <img :src="image.preview" :alt="image.altText" class="h-32 w-full rounded-lg object-cover" />
+            <!-- Gallery Preview -->
+            <div class="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                <div v-for="(image, index) in imageGallery" :key="image.id || index"
+                    class="relative rounded-lg border p-2">
+                    <img :src="image.preview || image.image_url" :alt="image.alt_text"
+                        class="h-32 w-full rounded-lg object-cover" />
 
                     <div class="mt-2 space-y-2">
                         <input v-model="image.caption" type="text" placeholder="Resim başlığı"
-                            class="w-full text-sm rounded-md border-gray-300"
-                            @input="updateImageMeta(index, 'caption', $event.target.value)" />
-                        <input v-model="image.altText" type="text" placeholder="Alt metin"
-                            class="w-full text-sm rounded-md border-gray-300"
-                            @input="updateImageMeta(index, 'altText', $event.target.value)" />
+                            class="w-full text-sm rounded-md border-gray-300" />
+                        <input v-model="image.alt_text" type="text" placeholder="Alt metin"
+                            class="w-full text-sm rounded-md border-gray-300" />
                     </div>
 
-                    <button type="button" @click="removeGalleryImage(index)"
-                        class="absolute -top-2 -right-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500">
+                    <button @click="removeGalleryImage(index)"
+                        class="absolute -top-2 -right-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-600">
                         <span class="sr-only">Görseli kaldır</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd"
-                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                clip-rule="evenodd" />
-                        </svg>
+                        <!-- Silme ikonu -->
                     </button>
                 </div>
             </div>

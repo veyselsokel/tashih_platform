@@ -7,6 +7,7 @@ import { createApp, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import VueTyper from 'vue3-typer';
 import 'vue3-typer/dist/vue-typer.css';
+import 'crosswords-js/dist/crosswords.css';
 
 const appName = import.meta.env.VITE_APP_NAME;
 

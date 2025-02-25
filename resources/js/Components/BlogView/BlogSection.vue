@@ -1,4 +1,3 @@
-//components/BlogView/BlogSection.vue
 <script setup>
 import { Link } from '@inertiajs/vue3';
 import { Search, Calendar, User, Clock, Tag } from 'lucide-vue-next';

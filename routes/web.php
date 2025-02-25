@@ -7,6 +7,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\CrosswordController;
 
 // Genel Sayfalar
 Route::get('/', function () {
@@ -27,6 +28,13 @@ Route::get('/hakkimizda', function () {
     ]);
 });
 
+Route::get('/bulmacalar', function () {
+    return Inertia::render('CrosswordPage', [
+        'title' => 'Bulmacalar'
+    ]);
+})->name('bulmacalar');
+
+
 Route::get('/hizmetlerimiz', function () {
     return Inertia::render('Services');
 })->name('services');
@@ -43,7 +51,7 @@ Route::prefix('blog')->name('blog.')->group(function () {
         Route::post('/', [BlogController::class, 'store'])->name('store');
         Route::post('/draft', [BlogController::class, 'saveDraft'])->name('draft');
         Route::get('/{slug}/edit', [BlogController::class, 'edit'])->name('edit');
-        Route::put('/{slug}', [BlogController::class, 'update'])->name('update');
+        Route::post('/{slug}', [BlogController::class, 'update'])->name('update');
         Route::delete('/{slug}', [BlogController::class, 'destroy'])->name('destroy');
     });
 });

@@ -191,7 +191,7 @@ const stats = [
 }
 
 .animate-count {
-    @apply transition-all duration-1000;
+    transition: all 1s;
     counter-reset: count 0;
     animation: count 2s forwards;
 }
