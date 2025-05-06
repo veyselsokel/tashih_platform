@@ -1,0 +1,19 @@
+number,direction,row,col,length,text,solution
+1,across,0,7,6,"Bir şeyi veya kimseyi küçük görme, önem vermeme.",HORLUK
+5,across,2,1,6,"Türkiye'nin başkenti.",ANKARA
+7,across,2,8,3,"Bir iş için gerekli olan para, mali kaynak.",FON
+8,across,4,1,4,"Yılın on ikinci ayı.",ARAL
+9,across,4,6,6,"Bir konuyu aydınlatmak için verilen bilgi.",IZAHAT
+11,across,6,0,5,"Yemek pişirilen yer.",MUTFA
+13,across,6,6,5,"Bir tür değerli taş.",ELMAS
+15,across,8,0,5,"Bir müzik aleti.",GITAR
+16,across,8,7,6,"Sıvıların akmasını sağlayan araç.",MUSLUK
+17,across,10,1,5,"Güneş sistemindeki bir gezegen.",VENUS
+18,across,11,6,5,"Yazı yazmaya yarayan araç.",KALEM
+2,down,0,9,4,"Halk ozanı.",OZAN
+3,down,0,11,6,"Bir şeyi yapma veya kullanma izni.",RUHSAT
+4,down,1,7,6,"Bir sıvıyı içmek için kullanılan araç.",BARDAK
+6,down,2,4,5,"Bir olayın veya durumun nedeni.",SEBEP
+10,down,4,11,6,"Bir işi yapmak için gösterilen çaba.",GAYRET
+12,down,6,2,3,"Bir tür deniz hayvanı.",FOK
+14,down,6,8,5,"Bir ülkenin yönetim biçimi.",REJIM

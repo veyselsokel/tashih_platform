@@ -6,6 +6,7 @@ use App\Http\Controllers\CorrectionRequestController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\FiyatTakipApiController;
 use Inertia\Inertia;
 use App\Http\Controllers\CrosswordController;
 
@@ -15,6 +16,14 @@ Route::get('/', function () {
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
     ]);
+});
+
+Route::get('/fiyat-takip', 'App\Http\Controllers\FiyatTakipController@index')->name('fiyat-takip');
+
+Route::prefix('fiyat-takip')->group(function () {
+    Route::post('/start', [FiyatTakipApiController::class, 'start']);
+    Route::post('/stop', [FiyatTakipApiController::class, 'stop']);
+    Route::get('/status', [FiyatTakipApiController::class, 'getStatus']);
 });
 
 // İletişim Rotaları

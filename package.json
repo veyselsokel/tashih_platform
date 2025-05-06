@@ -25,6 +25,7 @@
         "lucide-react": "^0.460.0",
         "lucide-vue-next": "^0.460.0",
         "markdown-it": "^14.1.0",
+        "papaparse": "^5.5.2",
         "vue-router": "^4.4.5",
         "vue3-typer": "^1.0.0"
     }
