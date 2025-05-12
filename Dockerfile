@@ -30,7 +30,7 @@ RUN apk update && apk add --no-cache \
     freetype-dev \
     icu-dev \
     mariadb-dev \
-    # Eğer supervisor gibi bir process manager kullanacaksanız: supervisor
+    oniguruma-dev \
     && rm -rf /var/cache/apk/*
 
 # Gerekli PHP eklentilerini kur:
