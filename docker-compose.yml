@@ -25,6 +25,8 @@ services:
     networks:
       # Bu servisleri birbirine bağlamak için oluşturduğumuz ağ
       - tashih_network
+      - mariadb_default
+
       # --- OPSİYONEL ---
       # Eğer aşağıdaki adımlarda 'mariadb' ismine ulaşılamazsa,
       # MariaDB'nin bulunduğu CasaOS ağını (genellikle 'casaos' olur)
@@ -79,10 +81,11 @@ services:
 # Ağ Tanımlamaları
 # -----------------------------------------
 networks:
-  # Servislerin kendi aralarında iletişim kurması için özel bir köprü ağı
   tashih_network:
     driver: bridge
-
+  # --- BU BÖLÜMÜ GÜNCELLEYİN/EKLEYİN ---
+  mariadb_default: # Bulduğumuz ağ adını kullanıyoruz
+    external: true # Bu ağın zaten var olduğunu belirtir
   # --- OPSİYONEL ---
   # Eğer MariaDB'ye 'mariadb' ismiyle ulaşılamazsa, CasaOS'un varsayılan
   # ağını buraya ekleyip 'app' servisini ona bağlamak gerekebilir.
