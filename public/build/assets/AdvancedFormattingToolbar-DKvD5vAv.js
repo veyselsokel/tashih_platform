@@ -1,0 +1,57 @@
+import{r as p,o as K,s as O,d as r,b as t,F as c,e as d,h as z,u as v,t as l,f as A,a,n as h,c as k,g as _}from"./app-A8zMFDdo.js";import{_ as R}from"./_plugin-vue_export-helper-DlAUqK2U.js";import{c as i}from"./createLucideIcon-DK8Lt3VK.js";import{a as D,A as P,b as Q,c as U,T as W,P as Y}from"./type-De0tG_Kj.js";/**
+ * @license lucide-vue-next v0.460.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const J=i("BoldIcon",[["path",{d:"M6 12h9a4 4 0 0 1 0 8H7a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h7a4 4 0 0 1 0 8",key:"mg9rjx"}]]);/**
+ * @license lucide-vue-next v0.460.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const L=i("CodeIcon",[["polyline",{points:"16 18 22 12 16 6",key:"z7tu5w"}],["polyline",{points:"8 6 2 12 8 18",key:"1eg1df"}]]);/**
+ * @license lucide-vue-next v0.460.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const X=i("ItalicIcon",[["line",{x1:"19",x2:"10",y1:"4",y2:"4",key:"15jd3p"}],["line",{x1:"14",x2:"5",y1:"20",y2:"20",key:"bu0au3"}],["line",{x1:"15",x2:"9",y1:"4",y2:"20",key:"uljnxc"}]]);/**
+ * @license lucide-vue-next v0.460.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const Z=i("LinkIcon",[["path",{d:"M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71",key:"1cjeqo"}],["path",{d:"M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71",key:"19qd67"}]]);/**
+ * @license lucide-vue-next v0.460.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const ee=i("ListOrderedIcon",[["path",{d:"M10 12h11",key:"6m4ad9"}],["path",{d:"M10 18h11",key:"11hvi2"}],["path",{d:"M10 6h11",key:"c7qv1k"}],["path",{d:"M4 10h2",key:"16xx2s"}],["path",{d:"M4 6h1v4",key:"cnovpq"}],["path",{d:"M6 18H4c0-1 2-2 2-3s-1-1.5-2-1",key:"m9a95d"}]]);/**
+ * @license lucide-vue-next v0.460.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const te=i("ListIcon",[["path",{d:"M3 12h.01",key:"nlz23k"}],["path",{d:"M3 18h.01",key:"1tta3j"}],["path",{d:"M3 6h.01",key:"1rqtza"}],["path",{d:"M8 12h13",key:"1za7za"}],["path",{d:"M8 18h13",key:"1lx6n3"}],["path",{d:"M8 6h13",key:"ik3vkj"}]]);/**
+ * @license lucide-vue-next v0.460.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const oe=i("MonitorIcon",[["rect",{width:"20",height:"14",x:"2",y:"3",rx:"2",key:"48i651"}],["line",{x1:"8",x2:"16",y1:"21",y2:"21",key:"1svkeh"}],["line",{x1:"12",x2:"12",y1:"17",y2:"21",key:"vw1qmm"}]]);/**
+ * @license lucide-vue-next v0.460.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const ne=i("MusicIcon",[["path",{d:"M9 18V5l12-2v13",key:"1jmyc2"}],["circle",{cx:"6",cy:"18",r:"3",key:"fqmcym"}],["circle",{cx:"18",cy:"16",r:"3",key:"1hluhg"}]]);/**
+ * @license lucide-vue-next v0.460.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const j=i("QuoteIcon",[["path",{d:"M16 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z",key:"rib7q0"}],["path",{d:"M5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z",key:"1ymkrd"}]]),ae={class:"formatting-toolbar space-y-4"},le={class:"flex flex-col sm:flex-row items-stretch sm:items-center gap-4 p-4 bg-gray-50 rounded-lg"},se={class:"flex items-center gap-2"},ie={class:"flex flex-wrap gap-2"},re=["onClick"],ce={class:"text-sm"},de={class:"text-sm"},ue={class:"grid grid-cols-1 lg:grid-cols-2 gap-4 p-4 border rounded-lg"},me={class:"space-y-4"},pe={class:"flex flex-col sm:flex-row gap-2"},ve=["value"],ge=["value"],he=["value"],ye=["value"],xe={class:"flex flex-col sm:flex-row items-start sm:items-center gap-2"},fe={class:"flex-1 grid grid-cols-2 sm:grid-cols-4 gap-1"},be=["onClick"],ke={class:"space-y-4"},_e={class:"flex justify-center space-x-1"},we=["onClick"],Ce={class:"color-picker-container"},Me={class:"p-2 rounded-lg bg-gray-50"},Se={class:"flex items-center justify-between mb-2 flex-wrap gap-2"},Ve={class:"flex items-center space-x-2"},$e={class:"text-xs font-medium"},ze={class:"grid grid-cols-5 gap-2"},Ae=["onClick"],Le={class:"absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap"},je={class:"mt-3 flex items-center gap-3"},Ie={class:"flex flex-1"},Te=["value"],qe={class:"ml-2"},Be={class:"text-xs text-gray-500"},Ee={class:"flex flex-wrap gap-2 p-4 border rounded-lg"},Ge=["onClick"],Fe={class:"p-2 rounded-md bg-gray-100 hover:bg-gray-200 transition-colors"},He={class:"tooltip"},Ne={class:"text-xs opacity-75"},Ke={__name:"AdvancedFormattingToolbar",props:{modelValue:{type:Object,required:!0},content:{type:String,default:""}},emits:["update:modelValue","update:content","format"],setup(s,{emit:I}){const y=s,g=I;p(!1);const w=p("normal"),x=p(!1),f=p(""),T=p(window.innerWidth<768),C=()=>{T.value=window.innerWidth<768};K(()=>{document.addEventListener("selectionchange",M),window.addEventListener("resize",C)}),O(()=>{document.removeEventListener("selectionchange",M),window.removeEventListener("resize",C)});const M=()=>{var o;f.value=((o=document==null?void 0:document.getSelection())==null?void 0:o.toString())||""},S=o=>{f.value?$(n=>`<span style="color: ${o}">${n}</span>`):m("color",o)},q=[{id:"normal",label:"Normal Metin",icon:W},{id:"poem",label:"Şiir",icon:ne},{id:"code",label:"Kod",icon:L},{id:"quote",label:"Alıntı",icon:j}],B=[{value:"Arial, sans-serif",label:"Sans Serif"},{value:"Georgia, serif",label:"Serif"},{value:"Courier New, monospace",label:"Monospace"},{value:"Georgia, serif",label:"Georgia"}],E=[{value:"14px",label:"Küçük"},{value:"16px",label:"Normal"},{value:"18px",label:"Büyük"},{value:"20px",label:"Çok Büyük"}],G=[{value:"1.2",label:"Sıkışık"},{value:"1.5",label:"Normal"},{value:"1.8",label:"Geniş"},{value:"2",label:"Çok Geniş"}],V={poem:{font:"Georgia, serif",fontSize:"18px",lineHeight:"1.8",textAlign:"center",color:"#000000",contentStyle:"poem"},code:{font:"Courier New, monospace",fontSize:"16px",lineHeight:"1.5",textAlign:"left",color:"#24292e",contentStyle:"code"},quote:{font:"Georgia, serif",fontSize:"18px",lineHeight:"1.8",textAlign:"left",color:"#4a5568",contentStyle:"quote"}},m=(o,n)=>{const e={...y.modelValue,[o]:n};g("update:modelValue",e)},F=o=>{if(w.value=o,o in V){const n={...y.modelValue,...V[o]};if(g("update:modelValue",n),o==="poem"){const u=y.content.split(`
+`).map(b=>b.trim()).filter(b=>b).join(`
+    `);g("update:content",`    ${u}`)}}},H=[{icon:J,label:"Kalın",shortcut:"⌘+B",action:o=>`**${o.trim()}**`},{icon:X,label:"İtalik",shortcut:"⌘+I",action:o=>`*${o.trim()}*`},{icon:Z,label:"Bağlantı",shortcut:"⌘+K",action:o=>{const n=prompt("Bağlantı URL:","https://");return n?`[${o.trim()||"bağlantı"}](${n})`:o}},{icon:L,label:"Kod",shortcut:"⌘+`",action:o=>o.includes(`
+`)?`\`\`\`
+${o.trim()}
+\`\`\``:`\`${o.trim()}\``},{icon:j,label:"Alıntı",shortcut:"⌘+Q",action:o=>o.split(`
+`).map(n=>`> ${n}`).join(`
+`)},{icon:te,label:"Liste",shortcut:"⌘+L",action:o=>o.split(`
+`).map(n=>`- ${n.trim()}`).join(`
+`)},{icon:ee,label:"Numaralı Liste",shortcut:"⌘+O",action:o=>o.split(`
+`).map((n,e)=>`${e+1}. ${n.trim()}`).join(`
+`)},{icon:Y,label:"Metin Rengi",shortcut:"⌘+Shift+C",action:o=>{const n=prompt("Renk kodunu girin (örn: #FF0000)","#000000");return n?`<span style="color: ${n}">${o}</span>`:o}}],N=[{name:"Siyah",value:"#000000"},{name:"Koyu Gri",value:"#4A5568"},{name:"Gri",value:"#718096"},{name:"Açık Gri",value:"#A0AEC0"},{name:"Lacivert",value:"#2C5282"},{name:"Mavi",value:"#3182CE"},{name:"Yeşil",value:"#38A169"},{name:"Kırmızı",value:"#E53E3E"},{name:"Turuncu",value:"#ED8936"},{name:"Mor",value:"#805AD5"}],$=o=>{g("format",o)};return(o,n)=>(a(),r("div",ae,[t("div",le,[t("div",se,[n[4]||(n[4]=t("span",{class:"text-sm font-medium text-gray-700 whitespace-nowrap"},"İçerik Türü:",-1)),t("div",ie,[(a(),r(c,null,d(q,e=>t("button",{key:e.id,onClick:u=>F(e.id),class:h(["flex items-center px-3 py-1.5 rounded-md transition-colors min-w-[100px] justify-center",w.value===e.id?"bg-orange-100 text-orange-700":"bg-white hover:bg-gray-100"])},[(a(),k(_(e.icon),{class:"w-4 h-4 mr-2"})),t("span",ce,l(e.label),1)],10,re)),64))])]),t("button",{onClick:n[0]||(n[0]=e=>x.value=!x.value),class:"sm:ml-auto flex items-center justify-center px-3 py-1.5 rounded-md bg-white hover:bg-gray-100"},[z(v(oe),{class:"w-4 h-4 mr-2"}),t("span",de,l(x.value?"Düzenle":"Önizle"),1)])]),t("div",ue,[t("div",me,[t("div",pe,[t("select",{value:s.modelValue.font,onChange:n[1]||(n[1]=e=>m("font",e.target.value)),class:"rounded-md border-gray-300 text-sm flex-1"},[(a(),r(c,null,d(B,e=>t("option",{key:e.value,value:e.value},l(e.label),9,ge)),64))],40,ve),t("select",{value:s.modelValue.fontSize,onChange:n[2]||(n[2]=e=>m("fontSize",e.target.value)),class:"rounded-md border-gray-300 text-sm flex-1"},[(a(),r(c,null,d(E,e=>t("option",{key:e.value,value:e.value},l(e.label),9,ye)),64))],40,he)]),t("div",xe,[z(v(D),{class:"w-4 h-4 text-gray-500"}),t("div",fe,[(a(),r(c,null,d(G,e=>t("button",{key:e.value,onClick:u=>m("lineHeight",e.value),class:h(["px-2 py-1 text-xs rounded transition-colors",s.modelValue.lineHeight===e.value?"bg-orange-100 text-orange-700":"bg-gray-100 hover:bg-gray-200"])},l(e.label),11,be)),64))])])]),t("div",ke,[t("div",_e,[(a(),r(c,null,d(["left","center","right"],e=>t("button",{key:e,onClick:u=>m("textAlign",e),class:h(["p-2 rounded-md transition-colors flex-1",s.modelValue.textAlign===e?"bg-orange-100 text-orange-700":"bg-gray-100 hover:bg-gray-200"])},[(a(),k(_(e==="left"?v(P):e==="center"?v(Q):v(U)),{class:"w-4 h-4 mx-auto"}))],10,we)),64))]),t("div",Ce,[t("div",Me,[t("div",Se,[n[5]||(n[5]=t("span",{class:"text-sm font-medium text-gray-700"},"Metin Rengi",-1)),t("div",Ve,[t("div",{class:"w-6 h-6 rounded border",style:A({backgroundColor:s.modelValue.color})},null,4),t("span",$e,l(s.modelValue.color),1)])]),t("div",ze,[(a(),r(c,null,d(N,e=>t("button",{key:e.value,onClick:u=>S(e.value),class:h(["w-8 h-8 rounded-lg border-2 transition-all hover:scale-110 relative group",s.modelValue.color===e.value?"border-orange-500 scale-110":"border-transparent"]),style:A({backgroundColor:e.value})},[t("span",Le,l(e.name),1)],14,Ae)),64))]),t("div",je,[t("div",Ie,[t("input",{type:"color",value:s.modelValue.color,onInput:n[3]||(n[3]=e=>S(e.target.value)),class:"custom-color-input"},null,40,Te),t("div",qe,[n[6]||(n[6]=t("span",{class:"text-xs font-medium text-gray-700"},"Özel Renk",-1)),t("div",Be,l(f.value?"Seçili metne uygulanacak":"Tüm metne uygulanacak"),1)])])])])])])]),t("div",Ee,[(a(),r(c,null,d(H,e=>t("button",{key:e.label,onClick:u=>$(e.action),class:"format-tool group relative"},[t("div",Fe,[(a(),k(_(e.icon),{class:"w-4 h-4"}))]),t("div",He,[t("span",null,l(e.label),1),t("span",Ne,l(e.shortcut),1)])],8,Ge)),64))])]))}},Qe=R(Ke,[["__scopeId","data-v-c69e4c51"]]);export{Qe as default};

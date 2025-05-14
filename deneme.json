@@ -1,0 +1,280 @@
+docker inspect mariadb
+[
+    {
+        "Id": "516207e701d06d29018308b2b39536386fc0f3f408238dbf32d4ab6d5f0a8c75",
+        "Created": "2025-05-12T23:06:29.319900984Z",
+        "Path": "/init",
+        "Args": [],
+        "State": {
+            "Status": "exited",
+            "Running": false,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 0,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2025-05-14T15:35:59.524714329Z",
+            "FinishedAt": "2025-05-14T15:37:02.435411983Z"
+        },
+        "Image": "sha256:cf93209dd2f8b0d515c43edaff64a30e7c2789390e0a7a7b3409af05d6e77c1a",
+        "ResolvConfPath": "/var/lib/docker/containers/516207e701d06d29018308b2b39536386fc0f3f408238dbf32d4ab6d5f0a8c75/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/516207e701d06d29018308b2b39536386fc0f3f408238dbf32d4ab6d5f0a8c75/hostname",
+        "HostsPath": "/var/lib/docker/containers/516207e701d06d29018308b2b39536386fc0f3f408238dbf32d4ab6d5f0a8c75/hosts",
+        "LogPath": "/var/lib/docker/containers/516207e701d06d29018308b2b39536386fc0f3f408238dbf32d4ab6d5f0a8c75/516207e701d06d29018308b2b39536386fc0f3f408238dbf32d4ab6d5f0a8c75-json.log",
+        "Name": "/mariadb",
+        "RestartCount": 0,
+        "Driver": "overlay2",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": null,
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "mariadb_default",
+            "PortBindings": {
+                "3306/tcp": [
+                    {
+                        "HostIp": "",
+                        "HostPort": "3306"
+                    }
+                ]
+            },
+            "RestartPolicy": {
+                "Name": "unless-stopped",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "private",
+            "Dns": null,
+            "DnsOptions": null,
+            "DnsSearch": null,
+            "ExtraHosts": [],
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "Isolation": "",
+            "CpuShares": 90,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": null,
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": null,
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "MemoryReservation": 0,
+            "MemorySwap": -1,
+            "MemorySwappiness": null,
+            "OomKillDisable": null,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "Mounts": [
+                {
+                    "Type": "bind",
+                    "Source": "/DATA/AppData/mariadb/config",
+                    "Target": "/config"
+                }
+            ],
+            "MaskedPaths": [
+                "/proc/asound",
+                "/proc/acpi",
+                "/proc/interrupts",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/sys/firmware",
+                "/sys/devices/virtual/powercap"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "GraphDriver": {
+            "Data": {
+                "ID": "516207e701d06d29018308b2b39536386fc0f3f408238dbf32d4ab6d5f0a8c75",
+                "LowerDir": "/var/lib/docker/overlay2/488c412d92ad0fb7ee4cb81fb6959cc1effc1a02dd517be22bf5699576321713-init/diff:/var/lib/docker/overlay2/b625857ec17064fe771e2ce2831233d2a24a523c91be3f722fc51c95199bc17c/diff:/var/lib/docker/overlay2/9f25d1f8c56de1363bfcdd83bd37aceac4eaa4e32d8279d319cbac4bb9ffee87/diff:/var/lib/docker/overlay2/879a36b9d30c98c424d037eb0d6b20b288b57dc967ceb3e1a22026cf14d63bcc/diff:/var/lib/docker/overlay2/d4f99cb12f318de32a05c2b8ab0215d0ff476942898df754cedde5160b56f8f3/diff:/var/lib/docker/overlay2/7cdb5a163dc2ebba2020ff530f25a83e9373b132ece9860b24f445119144ff57/diff:/var/lib/docker/overlay2/eebcc2cf58a6d6ab67ca80e8f8e4d0d7e6f4bf88c3e0d11c02469568a5e8d06a/diff:/var/lib/docker/overlay2/05656c0c5254429734d863becd538d94d21aa53f9663b09863617fc2973a9a73/diff:/var/lib/docker/overlay2/8dcc32285a88a1ac80742cbdccd2eefbdfb1cb6940f8a595d2d62aabfe37b06b/diff:/var/lib/docker/overlay2/e1b1890968fe8227df18eb9684464e44170a0cfe366c4d2f5605fcf262b55a41/diff",
+                "MergedDir": "/var/lib/docker/overlay2/488c412d92ad0fb7ee4cb81fb6959cc1effc1a02dd517be22bf5699576321713/merged",
+                "UpperDir": "/var/lib/docker/overlay2/488c412d92ad0fb7ee4cb81fb6959cc1effc1a02dd517be22bf5699576321713/diff",
+                "WorkDir": "/var/lib/docker/overlay2/488c412d92ad0fb7ee4cb81fb6959cc1effc1a02dd517be22bf5699576321713/work"
+            },
+            "Name": "overlay2"
+        },
+        "Mounts": [
+            {
+                "Type": "bind",
+                "Source": "/DATA/AppData/mariadb/config",
+                "Destination": "/config",
+                "Mode": "",
+                "RW": true,
+                "Propagation": "rprivate"
+            }
+        ],
+        "Config": {
+            "Hostname": "mariadb",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": true,
+            "AttachStderr": true,
+            "ExposedPorts": {
+                "3306/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PGID=1000",
+                "MYSQL_PASSWORD=veyselsokel",
+                "PUID=1000",
+                "MYSQL_ROOT_PASSWORD=veyselsokel",
+                "TZ=Europe/Istanbul",
+                "MYSQL_DATABASE=tashih_platform",
+                "OPENAI_API_KEY=sk-xxxxxx",
+                "MYSQL_USER=tashih_user",
+                "REMOTE_SQL=",
+                "PATH=/lsiopy/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "PS1=$(whoami)@$(hostname):$(pwd)\\$ ",
+                "HOME=/root",
+                "TERM=xterm",
+                "S6_CMD_WAIT_FOR_SERVICES_MAXTIME=0",
+                "S6_VERBOSITY=1",
+                "S6_STAGE2_HOOK=/docker-mods",
+                "VIRTUAL_ENV=/lsiopy",
+                "LSIO_FIRST_PARTY=true",
+                "MYSQL_DIR=/config",
+                "DATADIR=/config/databases"
+            ],
+            "Cmd": null,
+            "Image": "linuxserver/mariadb:11.4.5",
+            "Volumes": {
+                "/config": {}
+            },
+            "WorkingDir": "/",
+            "Entrypoint": [
+                "/init"
+            ],
+            "OnBuild": null,
+            "Labels": {
+                "build_version": "Linuxserver.io version:- 11.4.5-r0-ls183 Build-date:- 2025-05-06T07:47:02+00:00",
+                "com.docker.compose.config-hash": "3aa2a3f971333bec7118c97569d8bae645343d7734b0fbeb774863fdfc1440f8",
+                "com.docker.compose.container-number": "1",
+                "com.docker.compose.depends_on": "",
+                "com.docker.compose.image": "sha256:cf93209dd2f8b0d515c43edaff64a30e7c2789390e0a7a7b3409af05d6e77c1a",
+                "com.docker.compose.oneoff": "False",
+                "com.docker.compose.project": "mariadb",
+                "com.docker.compose.project.config_files": "/var/lib/casaos/apps/mariadb/docker-compose.yml",
+                "com.docker.compose.project.working_dir": "/var/lib/casaos/apps/mariadb",
+                "com.docker.compose.replace": "096bd03b03c72664abeaa3341fd240980824b8c8997fb16f95b0c1f5677c8161",
+                "com.docker.compose.service": "mariadb",
+                "com.docker.compose.version": "",
+                "icon": "https://cdn.jsdelivr.net/gh/IceWhaleTech/CasaOS-AppStore@main/Apps/MariaDB/icon.png",
+                "maintainer": "thelamer,nemchik",
+                "org.opencontainers.image.authors": "linuxserver.io",
+                "org.opencontainers.image.created": "2025-05-06T07:47:02+00:00",
+                "org.opencontainers.image.description": "[Mariadb](https://mariadb.org/) is one of the most popular database servers. Made by the original developers of MySQL.",
+                "org.opencontainers.image.documentation": "https://docs.linuxserver.io/images/docker-mariadb",
+                "org.opencontainers.image.licenses": "GPL-3.0-only",
+                "org.opencontainers.image.ref.name": "35c1fcc4f261fb3beb710a8a9a8d20e0ba36c023",
+                "org.opencontainers.image.revision": "35c1fcc4f261fb3beb710a8a9a8d20e0ba36c023",
+                "org.opencontainers.image.source": "https://github.com/linuxserver/docker-mariadb",
+                "org.opencontainers.image.title": "Mariadb",
+                "org.opencontainers.image.url": "https://github.com/linuxserver/docker-mariadb/packages",
+                "org.opencontainers.image.vendor": "linuxserver.io",
+                "org.opencontainers.image.version": "11.4.5-r0-ls183"
+            }
+        },
+        "NetworkSettings": {
+            "Bridge": "",
+            "SandboxID": "",
+            "SandboxKey": "",
+            "Ports": {},
+            "HairpinMode": false,
+            "LinkLocalIPv6Address": "",
+            "LinkLocalIPv6PrefixLen": 0,
+            "SecondaryIPAddresses": null,
+            "SecondaryIPv6Addresses": null,
+            "EndpointID": "",
+            "Gateway": "",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "IPAddress": "",
+            "IPPrefixLen": 0,
+            "IPv6Gateway": "",
+            "MacAddress": "",
+            "Networks": {
+                "mariadb_default": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": [
+                        "mariadb",
+                        "mariadb"
+                    ],
+                    "MacAddress": "",
+                    "DriverOpts": null,
+                    "GwPriority": 0,
+                    "NetworkID": "bfdb0ddd17e675f2cad01bc67afb7c2c65b12cbed05723c4f2c67e568d7bca66",
+                    "EndpointID": "",
+                    "Gateway": "",
+                    "IPAddress": "",
+                    "IPPrefixLen": 0,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "DNSNames": [
+                        "mariadb",
+                        "516207e701d0"
+                    ]
+                }
+            }
+        }
+    }
+]
