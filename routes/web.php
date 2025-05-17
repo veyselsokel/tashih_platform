@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FiyatTakipApiController;
 use Inertia\Inertia;
 use App\Http\Controllers\CrosswordController;
+use App\Http\Controllers\BlogPostController;
+use App\Http\Controllers\FiyatTakipController;
+use App\Http\Controllers\PageController; // Statik sayfalar için (örn: anasayfa, hakkımızda)
+
 
 // Genel Sayfalar
 Route::get('/', function () {
@@ -17,6 +21,9 @@ Route::get('/', function () {
         'canRegister' => Route::has('register'),
     ]);
 });
+
+Route::get('/blog', [BlogPostController::class, 'index'])->name('blog.index.public'); // Public blog listeleme
+Route::get('/blog/{blogPost:slug}', [BlogPostController::class, 'show'])->name('blog.show.public'); // Tekil blog yazısı gösterme
 
 Route::get('/fiyat-takip', 'App\Http\Controllers\FiyatTakipController@index')->name('fiyat-takip');
 
@@ -63,6 +70,22 @@ Route::prefix('blog')->name('blog.')->group(function () {
         Route::post('/{slug}', [BlogController::class, 'update'])->name('update');
         Route::delete('/{slug}', [BlogController::class, 'destroy'])->name('destroy');
     });
+});
+
+Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Blog Yönetimi
+    Route::resource('blog', BlogPostController::class)->except(['show']); // Admin için show yerine edit kullanılır genelde
+    // BlogPostController içinde show metodu public taraf için ayarlandı, admin için gerekirse ayrı bir show metodu veya direkt edit kullanılabilir.
+    // Route::get('blog/{blogPost}', [BlogPostController::class, 'show'])->name('blog.show'); // Admin için show (isteğe bağlı)
+
+    // Kategori Yönetimi (CategoryController oluşturulursa)
+    // Route::resource('categories', CategoryController::class)->except(['show']);
+
+    // Editör için görsel yükleme endpoint'i
+    Route::post('blog/upload-editor-image', [BlogPostController::class, 'uploadEditorImage'])->name('blog.uploadEditorImage');
+
 });
 
 // Yetkilendirme Gerektiren Rotalar
