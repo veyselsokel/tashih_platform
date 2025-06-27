@@ -5,6 +5,7 @@ import {
     Underline, List, ListOrdered, Quote, Code, Link, Music,
     Palette, TextSelect, LayoutTemplate, Monitor
 } from 'lucide-vue-next';
+import { fontOptions, fontSizeOptions } from '@/constants/formatting';
 
 const props = defineProps({
     modelValue: {
@@ -54,21 +55,6 @@ const contentTypes = [
     { id: 'poem', label: 'Şiir', icon: Music },
     { id: 'code', label: 'Kod', icon: Code },
     { id: 'quote', label: 'Alıntı', icon: Quote }
-];
-
-const fontOptions = [
-    { value: 'Arial, sans-serif', label: 'Sans Serif' },
-    { value: 'Georgia, serif', label: 'Serif' },
-    { value: 'Courier New, monospace', label: 'Monospace' },
-    { value: 'Georgia, serif', label: 'Georgia' }
-];
-
-// Font boyutu seçeneklerini güncelleyelim
-const fontSizeOptions = [
-    { value: '14px', label: 'Küçük' },
-    { value: '16px', label: 'Normal' },
-    { value: '18px', label: 'Büyük' },
-    { value: '20px', label: 'Çok Büyük' }
 ];
 
 // Line height seçeneklerini güncelleyelim

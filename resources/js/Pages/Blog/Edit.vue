@@ -192,9 +192,12 @@ const deletePost = () => {
                                 <InputError class="mt-2" :message="form.errors.title" />
                             </div>
 
-                            <FormattingToolbar v-model="form.formatting" :onFormatText="handleFormatText" />
-                            <AdvancedFormattingToolbar :editor="contentEditorRef" v-model:content="form.content"
-                                :formatting="form.formatting" @apply-format="handleFormatText" />
+                            <FormattingToolbar
+                                v-model="form.formatting"
+                                :content="form.content"
+                                :onFormatText="handleFormatText"
+                                @update:content="form.content = $event"
+                            />
 
                             <div class="relative">
                                 <div class="mb-2 flex items-center justify-between">
