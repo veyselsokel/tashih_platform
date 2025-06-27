@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('blog_posts', function (Blueprint $table) {
             $table->boolean('is_published')->default(false)->after('content');
-            $table->boolean('is_draft')->default(true)->after('is_published');
+            $table->boolean('is_draft')->default(true);
         });
     }
 
