@@ -1,4 +1,5 @@
-//Pages/Blog/Show.vue
+// resources/js/Pages/Blog/Show.vue
+
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
 import { Calendar, Clock, User, Tag, Share2, ArrowLeft } from 'lucide-vue-next';
@@ -10,9 +11,17 @@ import ImageLightbox from './ImageLightbox.vue';
 const showLightbox = ref(false);
 const selectedImageIndex = ref(0);
 
+// Props definition corrected to accept 'blogPost'
+const props = defineProps({
+    blogPost: {
+        type: Object,
+        required: true
+    }
+});
+
 // Lightbox'ı açan fonksiyon
 const openLightbox = (index) => {
-    if (props.post.gallery && props.post.gallery.length > 0) {
+    if (props.blogPost.gallery && props.blogPost.gallery.length > 0) {
         selectedImageIndex.value = index;
         showLightbox.value = true;
     }
@@ -50,17 +59,6 @@ md.renderer.rules.heading_open = (tokens, idx) => {
     return `<${level} class="${classes[level] || ''}">`
 };
 
-const props = defineProps({
-    post: {
-        type: Object,
-        required: true
-    },
-    title: {
-        type: String,
-        required: true
-    }
-});
-
 const showShareMenu = ref(false);
 
 const formatDate = (date) => {
@@ -86,7 +84,8 @@ const formatContent = (content) => {
 
 const sharePost = async (platform) => {
     const url = window.location.href;
-    const text = props.post.title;
+    // Corrected to use blogPost.title
+    const text = props.blogPost.title;
 
     switch (platform) {
         case 'twitter':
@@ -129,9 +128,12 @@ onMounted(() => {
 </script>
 
 <template>
-    <GuestLayout :title="title">
+    <!-- Corrected to use blogPost.title -->
+    <GuestLayout :title="blogPost.title">
 
-        <Head :title="post.title" />
+        <!-- Corrected to use blogPost.title -->
+
+        <Head :title="blogPost.title" />
 
         <!-- Reading Progress Bar -->
         <div class="fixed top-0 left-0 w-full h-1 bg-gray-200 z-50">
@@ -140,8 +142,10 @@ onMounted(() => {
         </div>
 
         <!-- Hero Section -->
-        <div v-if="post.featured_image_url" class="relative w-full h-[60vh] sm:h-[70vh] overflow-hidden mt-14 sm:mt-20">
-            <img :src="post.featured_image_url" :alt="post.title"
+        <!-- All instances of 'post' changed to 'blogPost' -->
+        <div v-if="blogPost.featured_image_url"
+            class="relative w-full h-[60vh] sm:h-[70vh] overflow-hidden mt-14 sm:mt-20">
+            <img :src="blogPost.featured_image_url" :alt="blogPost.title"
                 class="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700" />
             <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
 
@@ -155,19 +159,19 @@ onMounted(() => {
             <!-- Title Section in Hero -->
             <div class="absolute bottom-0 left-0 right-0 p-8">
                 <div class="max-w-4xl mx-auto">
-                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">{{ post.title }}</h1>
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">{{ blogPost.title }}</h1>
                     <div class="flex flex-wrap items-center gap-6 text-gray-200">
                         <div class="flex items-center">
                             <Calendar class="w-5 h-5 mr-2" />
-                            {{ formatDate(post.published_at || post.created_at) }}
+                            {{ formatDate(blogPost.published_at || blogPost.created_at) }}
                         </div>
                         <div class="flex items-center">
                             <User class="w-5 h-5 mr-2" />
-                            {{ post.user?.name }}
+                            {{ blogPost.user?.name }}
                         </div>
                         <div class="flex items-center">
                             <Clock class="w-5 h-5 mr-2" />
-                            {{ getReadingTime(post.content) }}
+                            {{ getReadingTime(blogPost.content) }}
                         </div>
                     </div>
                 </div>
@@ -183,19 +187,19 @@ onMounted(() => {
             Geri Dön
             </Link>
 
-            <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">{{ post.title }}</h1>
+            <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">{{ blogPost.title }}</h1>
             <div class="flex flex-wrap items-center gap-6 text-gray-600">
                 <div class="flex items-center">
                     <Calendar class="w-5 h-5 mr-2" />
-                    {{ formatDate(post.published_at || post.created_at) }}
+                    {{ formatDate(blogPost.published_at || blogPost.created_at) }}
                 </div>
                 <div class="flex items-center">
                     <User class="w-5 h-5 mr-2" />
-                    {{ post.user?.name }}
+                    {{ blogPost.user?.name }}
                 </div>
                 <div class="flex items-center">
                     <Clock class="w-5 h-5 mr-2" />
-                    {{ getReadingTime(post.content) }}
+                    {{ getReadingTime(blogPost.content) }}
                 </div>
             </div>
         </div>
@@ -203,15 +207,15 @@ onMounted(() => {
         <!-- Main Content -->
         <div class="max-w-4xl mx-auto px-4 py-12">
             <!-- Meta Description -->
-            <div v-if="post.meta_description" class="mb-12">
+            <div v-if="blogPost.meta_description" class="mb-12">
                 <p class="text-xl text-gray-600 italic border-l-4 border-orange-500 pl-4">
-                    {{ post.meta_description }}
+                    {{ blogPost.meta_description }}
                 </p>
             </div>
 
             <!-- Tags -->
-            <div v-if="post.tags?.length" class="mb-12 flex flex-wrap gap-2">
-                <span v-for="tag in post.tags" :key="tag"
+            <div v-if="blogPost.tags?.length" class="mb-12 flex flex-wrap gap-2">
+                <span v-for="tag in blogPost.tags" :key="tag"
                     class="inline-flex items-center px-4 py-1.5 bg-orange-50 text-orange-800 rounded-full text-sm font-medium hover:bg-orange-100 transition-colors">
                     <Tag class="w-4 h-4 mr-1.5" />
                     {{ tag }}
@@ -220,18 +224,18 @@ onMounted(() => {
 
             <!-- Article Content -->
             <article class="prose prose-lg prose-orange mx-auto blog-content" :style="{
-                fontFamily: post.formatting?.font,
-                textAlign: post.formatting?.textAlign,
-                color: post.formatting?.color,
-                lineHeight: post.formatting?.lineHeight
-            }" v-html="formatContent(post.content)">
+                fontFamily: blogPost.formatting?.font,
+                textAlign: blogPost.formatting?.textAlign,
+                color: blogPost.formatting?.color,
+                lineHeight: blogPost.formatting?.lineHeight
+            }" v-html="formatContent(blogPost.content)">
             </article>
             <!-- Blog yazısı içeriğinden sonra -->
-            <div v-if="post.gallery?.length" class="mt-12 space-y-8">
+            <div v-if="blogPost.gallery?.length" class="mt-12 space-y-8">
                 <h3 class="text-2xl font-bold text-gray-900">Galeri</h3>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div v-for="(image, index) in post.gallery" :key="image.id"
+                    <div v-for="(image, index) in blogPost.gallery" :key="image.id"
                         class="group relative overflow-hidden rounded-lg shadow-lg cursor-pointer hover:shadow-xl transition-all"
                         @click="openLightbox(index)">
                         <div class="aspect-w-16 aspect-h-9">
@@ -261,7 +265,7 @@ onMounted(() => {
                 </div>
 
                 <!-- Lightbox Component -->
-                <ImageLightbox :images="post.gallery" :is-open="showLightbox" :initial-index="selectedImageIndex"
+                <ImageLightbox :images="blogPost.gallery" :is-open="showLightbox" :initial-index="selectedImageIndex"
                     @close="showLightbox = false" />
             </div>
 
@@ -271,7 +275,8 @@ onMounted(() => {
                     <div class="flex items-center space-x-4">
                         <div class="text-sm">
                             <p class="text-gray-500">Yazan</p>
-                            <p class="font-medium text-gray-900">{{ post.user?.name }}</p>
+                            <!-- Corrected to use blogPost.user?.name -->
+                            <p class="font-medium text-gray-900">{{ blogPost.user?.name }}</p>
                         </div>
                     </div>
 
