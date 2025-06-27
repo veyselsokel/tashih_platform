@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('blog_posts', function (Blueprint $table) {
-            $table->boolean('is_published')->default(false)->after('your_previous_column');
+            $table->boolean('is_published')->default(false)->after('content');
             $table->boolean('is_draft')->default(true)->after('is_published');
         });
     }
