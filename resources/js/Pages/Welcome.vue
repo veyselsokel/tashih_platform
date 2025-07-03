@@ -3,7 +3,6 @@ import { ref, onMounted } from 'vue';
 import HeroSection from '@/Components/Welcome/HeroSection.vue';
 import InfoSection from '@/Components/Welcome/InfoSection.vue';
 import FeaturesSection from '@/Components/Welcome/FeaturesSection.vue';
-import TestimonialsSection from '@/Components/Welcome/TestimonialsSection.vue';
 import ContactSection from '@/Components/Welcome/ContactSection.vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import ContentComponent from '@/Components/Content/ContentComponent.vue';
@@ -26,12 +25,11 @@ const handleScroll = () => {
 </script>
 
 <template>
-    <GuestLayout title="Welcome">
+    <GuestLayout title="Tashih Nedir? Profesyonel Metin Düzeltme Hizmetleri">
         <HeroSection />
         <InfoSection />
         <ContentComponent />
-        <FeaturesSection />
-        <TestimonialsSection />
-        <ContactSection />
+        <FeaturesSection id="services" />
+        <ContactSection id="contact" />
     </GuestLayout>
 </template>

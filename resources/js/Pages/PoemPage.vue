@@ -9,11 +9,21 @@ defineProps({
 </script>
 
 <template>
-    <GuestLayout>
-        <div class="bg-gradient-to-b from-green-50 to-white min-h-screen flex items-center justify-center">
-            <div>
+    <GuestLayout title="Şiirler">
+        <div class="bg-stone-50 min-h-screen">
+             <header class="relative text-center px-6 py-24 md:py-32">
+                 <div class="max-w-4xl mx-auto">
+                    <h1 class="text-4xl md:text-5xl font-extrabold text-gray-800 leading-tight mb-4">
+                        Şiirler
+                    </h1>
+                    <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                        Kalemimizden dökülenler.
+                    </p>
+                </div>
+            </header>
+            <main class="pb-24">
                 <PoemSection />
-            </div>
+            </main>
         </div>
     </GuestLayout>
 </template>

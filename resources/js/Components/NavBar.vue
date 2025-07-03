@@ -91,8 +91,8 @@ onMounted(() => {
             <div class="flex items-center justify-between h-14 sm:h-16 lg:h-20">
                 <!-- Logo -->
                 <Link href="/"
-                    class="group relative text-lg sm:text-xl lg:text-2xl font-bold text-navy-600 hover:text-orange-500 transition-all duration-300">
-                <span class="whitespace-nowrap">Tashih Hizmetleri</span>
+                    class="group relative text-xl sm:text-2xl lg:text-3xl font-bold text-navy-600 hover:text-orange-500 transition-all duration-300">
+                <span class="whitespace-nowrap">tashih</span>
                 <span
                     class="absolute bottom-0 left-0 w-full h-0.5 bg-orange-500 transform scale-x-0 transition-transform duration-300 origin-left group-hover:scale-x-100"></span>
                 </Link>
@@ -100,7 +100,7 @@ onMounted(() => {
                 <!-- Desktop Navigation -->
                 <div class="hidden md:flex items-center space-x-2 lg:space-x-4 xl:space-x-6">
                     <Link v-for="item in navigationItems" :key="item" :href="'/' + turkishToEnglish(item)"
-                        class="group relative px-2 lg:px-3 py-2 text-sm lg:text-base font-medium">
+                        class="group relative px-2 lg:px-3 py-2 text-sm lg:text-xl font-medium">
                     <span class="relative z-10 text-navy-600 transition-colors duration-300">
                         {{ item }}
                     </span>

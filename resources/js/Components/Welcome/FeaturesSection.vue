@@ -1,77 +1,66 @@
 <script setup>
 import { ref, onMounted } from 'vue';
+import { BookCheck, ShieldCheck } from 'lucide-vue-next';
 
 const isVisible = ref(false);
+const servicesSection = ref(null);
 
 onMounted(() => {
     const observer = new IntersectionObserver(
         (entries) => {
             if (entries[0].isIntersecting) {
                 isVisible.value = true;
+                observer.unobserve(entries[0].target);
             }
         },
         { threshold: 0.1 }
     );
 
-    const element = document.querySelector('#portfolio-section');
-    if (element) observer.observe(element);
+    if (servicesSection.value) {
+        observer.observe(servicesSection.value);
+    }
 });
 
-const portfolioItems = [
+const services = [
     {
-        icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path></svg>`,
-        title: 'Akademik Kitaplar',
-        description: 'Çeşitli akademik yayınevleri için tashih hizmeti verdiğimiz kitaplar.',
-        count: '250+'
+        icon: BookCheck,
+        title: 'Tez ve Makale Düzeltmesi (Akademik Tashih)',
+        description: 'Akademik metinler, en yüksek düzeyde doğruluk ve profesyonellik gerektirir. Tez düzeltmesi ve makale düzeltmesi hizmetlerimizle, bilimsel çalışmalarınızın yazım, dil bilgisi, üslup ve format açısından kusursuz hale gelmesini sağlıyoruz.',
     },
     {
-        icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>`,
-        title: 'Akademik Makaleler',
-        description: 'Ulusal ve uluslararası dergilerde yayınlanan makaleler için sağladığımız düzenleme hizmetleri.',
-        count: '1000+'
-    },
-    {
-        icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>`,
-        title: 'Edebi Eserler',
-        description: 'Roman, hikaye ve şiir kitapları için gerçekleştirdiğimiz profesyonel düzenleme çalışmaları.',
-        count: '150+'
-    },
-    {
-        icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"></rect><polyline points="17 2 12 7 7 2"></polyline></svg>`,
-        title: 'Kurumsal Projeler',
-        description: 'Şirketler ve kurumlar için hazırladığımız raporlar ve kurumsal dokümanlar.',
-        count: '300+'
+        icon: ShieldCheck,
+        title: 'İntihal Giderme ve Özgünlük Kontrolü',
+        description: 'Akademik ve dijital dünyada özgünlük esastır. Metinlerinizdeki intihal (aşırma) oranlarını tespit ediyor, anlamı ve bütünlüğü koruyarak gerekli yeniden yazım (paraphrasing) işlemlerini yaparak intihal giderme hizmeti sunuyoruz.',
     }
 ];
 </script>
 
 <template>
-    <section id="portfolio-section" class="py-20 bg-white">
+    <section id="services-section" ref="servicesSection" class="py-24 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
-                <h2 class="text-3xl font-bold text-navy-900 mb-4"
+                <h2 class="text-3xl font-extrabold text-gray-800 mb-4"
                     :class="{ 'opacity-100 translate-y-0': isVisible, 'opacity-0 translate-y-4': !isVisible }"
                     style="transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1)">
-                    Portföyümüz
+                    Hizmetlerimiz
                 </h2>
                 <p class="text-lg text-gray-600 max-w-2xl mx-auto"
                     :class="{ 'opacity-100 translate-y-0': isVisible, 'opacity-0 translate-y-4': !isVisible }"
                     style="transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s">
-                    Bugüne kadar tamamladığımız projelerden bazı örnekler
+                    Metinlerinizin türü ve ihtiyacı ne olursa olsun, profesyonel çözümler sunuyoruz.
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div v-for="(item, index) in portfolioItems" :key="index"
-                    class="p-6 bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div v-for="(service, index) in services" :key="index"
+                    class="p-8 bg-stone-50 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
                     :class="{ 'opacity-100 translate-y-0': isVisible, 'opacity-0 translate-y-4': !isVisible }"
                     :style="`transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1) ${0.2 + index * 0.1}s`">
-                    <div class="w-12 h-12 text-orange-500 mb-4" v-html="item.icon"></div>
-                    <div class="flex items-center justify-between mb-2">
-                        <h3 class="text-xl font-semibold text-navy-900">{{ item.title }}</h3>
-                        <!-- <span class="text-sm font-bold text-orange-500">{{ item.count }}</span> -->
+                    <div class="w-16 h-16 text-white bg-orange-500 rounded-full flex items-center justify-center mb-6 shadow-md">
+                        <component :is="service.icon" class="w-8 h-8" />
                     </div>
-                    <p class="text-gray-600">{{ item.description }}</p>
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-4">{{ service.title }}</h3>
+                    <p class="text-gray-600 leading-relaxed">{{ service.description }}</p>
                 </div>
             </div>
         </div>
