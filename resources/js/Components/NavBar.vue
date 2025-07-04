@@ -23,6 +23,7 @@ const navigationItems = [
     'Blog',
     'Hakkımızda',
     'Hizmetlerimiz',
+    'Vukuat',
     'Bulmacalar',
 ];
 
