@@ -1,0 +1,35 @@
+number,direction,row,col,length,text,solution
+1,across,0,0,8,"İki veya daha çok kişinin, kuruluşun karşılıklı ve birbirine uygun irade beyanlarıyla gerçekleşen işlem, bağıt, akit, sözleşme",MUKAVELE
+2,across,0,9,3,"Bir işi yapma, yerine getirme.",IFA
+3,across,1,0,5,"Ertesi yıl kendiliğinden çıkan tahıl, soğan vb.",ALAZA
+4,across,1,6,6,"Bir canlıda sürekli veya geçici yaşayarak ona zarar veren başka canlı, parazit.",ASALAK
+5,across,2,0,3,"Güney Kafkasyalı bir halk.",LAZ
+6,across,2,4,5,"Yük taşıyarak geçimini sağlayan kimse.",HAMAL
+7,across,3,0,4,"Yardım istenildiğini anlatan bir söz.",AMAN
+8,across,3,5,7,"Mirasta hak sahibi olma.",VERASET
+9,across,4,0,6,"Genellikle zırhlı araçlara karşı yakın savaş sırasında kullanılan hafif silah, roketatar.",BAZUKA
+10,across,4,7,5,"Etek ucuna doğru genişleyen (giysi).",EVAZE
+11,across,5,2,8,"Emanet olarak.",EMANETEN
+12,across,6,0,7,"Gözcü, bekçi, nöbetçi.",DIDEBAN
+13,across,6,8,4,"Hoş, güzel.",RANA
+14,across,7,0,6,"Piston.",ITENEK
+15,across,7,7,5,"Yöntem.",METOT
+16,down,0,1,5,"Ekleme, katma, ilave etme.",ULAMA
+18,down,6,1,2,"Halk dilinde köpek.",IT
+17,down,0,2,8,"Kazaya uğramış, kaza geçirmiş olan kimse.",KAZAZEDE
+19,down,0,3,2,"Çok olmayan.",AZ
+20,down,0,4,3,"“Yazık” anlamında söylenen bir söz.",VAH
+21,down,0,6,4,"Dokusunda altın ve gümüş renginde tel bulunan kumaş.",LAME
+22,down,0,7,6,"Kölelik, tutsaklık, esirlik.",ESARET
+23,down,0,10,5,"Yalı yar.",FALEZ
+24,down,0,11,2,"Beyaz.",AK
+25,down,2,5,6,"Kolaylıkla kandırılabilen veya aldatılabilen, aptal, bön.",AVANAK
+26,down,1,8,7,"Bir şeyin elden ele geçmesi.",ALAVERE
+27,down,6,10,2,"Numara.",NO
+28,down,3,11,5,"Karşıtlık, karşıt olma, zıtlık, çelişki.",TEZAT
+29,down,5,6,2,"Kısa kenar.",EN
+30,down,3,3,5,"Felsefede nesnenin kendisi.",NUMEN
+31,down,4,4,4,"Bütün müminlerin ibadet esnasında yöneldikleri merkez.",KABE
+32,down,0,0,8,"Diyarbakır’ın Silvan ilçesinde, Artuklular döneminden kalma ünlü tarihî köprü.",MALABADI
+33,down,0,9,2,"Vilayet.",IL
+34,down,3,9,5,"Bir duygu, tasarı, güzellik vb.nin anlatımı sonucu ortaya çıkan eser.",SANAT

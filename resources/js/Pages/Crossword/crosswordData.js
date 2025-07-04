@@ -1,34 +1,41 @@
-// resources/js/Pages/Crossword/crosswordData.js
-// Bu dosya artık varsayılan veya fallback bulmaca olarak kullanılabilir.
-// Ana yükleme mekanizması CSV'den olacak.
-
 export const examplePuzzle = {
-    title: "Genel Kültür Bulmacası (Varsayılan)",
-    width: 13, // Grid width
-    height: 12, // Grid height
+    title: "Türkçe Genel Kültür Bulmacası",
+    width: 12,
+    height: 8,
     clues: [
-      // --- Across Clues ---
-      { number: 1, direction: 'across', row: 0, col: 7, length: 6, text: "Bir şeyi veya kimseyi küçük görme, önem vermeme.", solution: "HORLUK" },
-      { number: 5, direction: 'across', row: 2, col: 0, length: 6, text: "Türkiye'nin başkenti.", solution: "ANKARA" }, // Length düzeltildi
-      { number: 7, direction: 'across', row: 2, col: 8, length: 3, text: "Bir iş için gerekli olan para, mali kaynak.", solution: "FON" }, // Length düzeltildi
-      { number: 8, direction: 'across', row: 4, col: 1, length: 4, text: "Yılın on ikinci ayı.", solution: "ARAL" },
-      { number: 9, direction: 'across', row: 4, col: 6, length: 7, text: "Bir konuyu aydınlatmak için verilen bilgi.", solution: "IZAHAT" },
-      { number: 11, direction: 'across', row: 6, col: 0, length: 5, text: "Yemek pişirilen yer.", solution: "MUTFA" },
-      { number: 13, direction: 'across', row: 6, col: 6, length: 5, text: "Bir tür değerli taş.", solution: "ELMAS" },
-      { number: 15, direction: 'across', row: 8, col: 0, length: 5, text: "Bir müzik aleti.", solution: "GITAR" }, // Length düzeltildi
-      { number: 16, direction: 'across', row: 8, col: 7, length: 6, text: "Sıvıların akmasını sağlayan araç.", solution: "MUSLUK" },
-      { number: 17, direction: 'across', row: 10, col: 1, length: 5, text: "Güneş sistemindeki bir gezegen.", solution: "VENUS" },
-      { number: 18, direction: 'across', row: 11, col: 6, length: 5, text: "Yazı yazmaya yarayan araç.", solution: "KALEM" },
-      // --- Down Clues ---
-      { number: 2, direction: 'down', row: 0, col: 9, length: 4, text: "Halk ozanı.", solution: "OZAN" }, // Length düzeltildi
-      { number: 3, direction: 'down', row: 0, col: 11, length: 7, text: "Bir şeyi yapma veya kullanma izni.", solution: "RUHSAT" },
-      { number: 4, direction: 'down', row: 1, col: 7, length: 6, text: "Bir sıvıyı içmek için kullanılan araç.", solution: "BARDAK" },
-      { number: 6, direction: 'down', row: 2, col: 4, length: 5, text: "Bir olayın veya durumun nedeni.", solution: "SEBEP" }, // Length düzeltildi
-      { number: 10, direction: 'down', row: 4, col: 11, length: 7, text: "Bir işi yapmak için gösterilen çaba.", solution: "GAYRET" },
-      { number: 12, direction: 'down', row: 6, col: 2, length: 3, text: "Bir tür deniz hayvanı.", solution: "FOK" }, // Length düzeltildi
-      { number: 14, direction: 'down', row: 6, col: 8, length: 5, text: "Bir ülkenin yönetim biçimi.", solution: "REJIM" }, // Length düzeltildi
+        { number: 1, direction: 'across', row: 0, col: 0, length: 8, text: "İki veya daha çok kişinin, kuruluşun karşılıklı ve birbirine uygun irade beyanlarıyla gerçekleşen işlem, bağıt, akit, sözleşme", solution: "MUKAVELE" },
+        { number: 2, direction: 'across', row: 0, col: 9, length: 3, text: "Bir işi yapma, yerine getirme.", solution: "İFA" },
+        { number: 3, direction: 'across', row: 1, col: 0, length: 5, text: "Ertesi yıl kendiliğinden çıkan tahıl, soğan vb.", solution: "ALAZA" },
+        { number: 4, direction: 'across', row: 1, col: 6, length: 6, text: "Bir canlıda sürekli veya geçici yaşayarak ona zarar veren başka canlı, parazit.", solution: "ASALAK" },
+        { number: 5, direction: 'across', row: 2, col: 0, length: 3, text: "Güney Kafkasyalı bir halk.", solution: "LAZ" },
+        { number: 6, direction: 'across', row: 2, col: 4, length: 5, text: "Yük taşıyarak geçimini sağlayan kimse.", solution: "HAMAL" },
+        { number: 7, direction: 'across', row: 3, col: 0, length: 4, text: "Yardım istenildiğini anlatan bir söz.", solution: "AMAN" },
+        { number: 8, direction: 'across', row: 3, col: 5, length: 7, text: "Mirasta hak sahibi olma.", solution: "VERASET" },
+        { number: 9, direction: 'across', row: 4, col: 0, length: 6, text: "Genellikle zırhlı araçlara karşı yakın savaş sırasında kullanılan hafif silah, roketatar.", solution: "BAZUKA" },
+        { number: 10, direction: 'across', row: 4, col: 7, length: 5, text: "Etek ucuna doğru genişleyen (giysi).", solution: "EVAZE" },
+        { number: 11, direction: 'across', row: 5, col: 2, length: 8, text: "Emanet olarak.", solution: "EMANETEN" },
+        { number: 12, direction: 'across', row: 6, col: 0, length: 7, text: "Gözcü, bekçi, nöbetçi.", solution: "DİDEBAN" },
+        { number: 13, direction: 'across', row: 6, col: 8, length: 4, text: "Hoş, güzel.", solution: "RANA" },
+        { number: 14, direction: 'across', row: 7, col: 0, length: 6, text: "Piston.", solution: "İTENEK" },
+        { number: 15, direction: 'across', row: 7, col: 7, length: 5, text: "Yöntem.", solution: "METOT" },
+        { number: 16, direction: 'down', row: 0, col: 1, length: 5, text: "Ekleme, katma, ilave etme.", solution: "ULAMA" },
+        { number: 17, direction: 'down', row: 0, col: 2, length: 8, text: "Kazaya uğramış, kaza geçirmiş olan kimse.", solution: "KAZAZEDE" },
+        { number: 18, direction: 'down', row: 6, col: 1, length: 2, text: "Halk dilinde köpek.", solution: "İT" },
+        { number: 19, direction: 'down', row: 0, col: 3, length: 2, text: "Çok olmayan.", solution: "AZ" },
+        { number: 20, direction: 'down', row: 0, col: 4, length: 3, text: "“Yazık” anlamında söylenen bir söz.", solution: "VAH" },
+        { number: 21, direction: 'down', row: 0, col: 6, length: 4, text: "Dokusunda altın ve gümüş renginde tel bulunan kumaş.", solution: "LAME" },
+        { number: 22, direction: 'down', row: 0, col: 7, length: 6, text: "Kölelik, tutsaklık, esirlik.", solution: "ESARET" },
+        { number: 23, direction: 'down', row: 0, col: 10, length: 5, text: "Yalı yar.", solution: "FALEZ" },
+        { number: 24, direction: 'down', row: 0, col: 11, length: 2, text: "Beyaz.", solution: "AK" },
+        { number: 25, direction: 'down', row: 2, col: 5, length: 6, text: "Kolaylıkla kandırılabilen veya aldatılabilen, aptal, bön.", solution: "AVANAK" },
+        { number: 26, direction: 'down', row: 1, col: 8, length: 7, text: "Bir şeyin elden ele geçmesi.", solution: "ALAVERE" },
+        { number: 27, direction: 'down', row: 6, col: 10, length: 2, text: "Numara.", solution: "NO" },
+        { number: 28, direction: 'down', row: 3, col: 11, length: 5, text: "Karşıtlık, karşıt olma, zıtlık, çelişki.", solution: "TEZAT" },
+        { number: 29, direction: 'down', row: 5, col: 6, length: 2, text: "Kısa kenar.", solution: "EN" },
+        { number: 30, direction: 'down', row: 3, col: 3, length: 5, text: "Felsefede nesnenin kendisi.", solution: "NUMEN" },
+        { number: 31, direction: 'down', row: 4, col: 4, length: 4, text: "Bütün müminlerin ibadet esnasında yöneldikleri merkez.", solution: "KABE" },
+        { number: 32, direction: 'down', row: 0, col: 0, length: 8, text: "Diyarbakır’ın Silvan ilçesinde, Artuklular döneminden kalma ünlü tarihî köprü.", solution: "MALABADİ" },
+        { number: 33, direction: 'down', row: 0, col: 9, length: 2, text: "Vilayet.", solution: "İL" },
+        { number: 34, direction: 'down', row: 3, col: 9, length: 5, text: "Bir duygu, tasarı, güzellik vb.nin anlatımı sonucu ortaya çıkan eser.", solution: "SANAT" }
     ]
-  };
-
-  // --- How to create your own puzzle file ---
-  // (Instructions remain the same for manual creation if needed)
+};
