@@ -39,7 +39,6 @@ const form = useForm({
 });
 
 // Refs
-const autoSaveInterval = ref(null);
 const lastSaved = ref(null);
 const showMarkdownPreview = ref(false);
 const contentEditorRef = ref(null);
@@ -73,18 +72,18 @@ const handleFormatText = (formatter) => {
     });
 };
 
-// Otomatik Kaydetmeyi Başlat
-const startAutoSave = () => {
-    autoSaveInterval.value = setInterval(() => {
-        if (form.isDirty && form.title) {
-            saveDraft();
-        }
-    }, 60000); // Her 60 saniyede bir
+// Manual save draft function
+const saveDraftManually = () => {
+    if (!form.title) {
+        alert('Lütfen başlık girin.');
+        return;
+    }
+    saveDraft();
 };
 
 // Taslak Olarak Kaydet
 const saveDraft = async () => {
-    if (!form.title) return;
+    if (!form.title || form.processing) return;
 
     let submissionScheduledAt = null;
     if (form.scheduled_at) {
@@ -114,6 +113,7 @@ const saveDraft = async () => {
         preserveState: true, // Keep component state on success for drafts
         onSuccess: (page) => {
             lastSaved.value = new Date().toLocaleTimeString();
+            alert('Taslak başarıyla kaydedildi!');
             // If the backend returns the created/updated post ID, you might want to update form.id
             // For now, we just indicate it's saved.
             // form.reset('content', 'title'); // Or just clear dirty state
@@ -171,13 +171,11 @@ const submit = () => {
 
 // Lifecycle
 onMounted(() => {
-    startAutoSave();
+    // No auto-save initialization
 });
 
 onUnmounted(() => {
-    if (autoSaveInterval.value) {
-        clearInterval(autoSaveInterval.value);
-    }
+    // No cleanup needed for auto-save
 });
 
 const submitButtonText = computed(() => {
@@ -324,9 +322,17 @@ const submitButtonText = computed(() => {
                                     class="rounded-md bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                                     @click="$inertia.visit(route('admin.blog.index'))"> İptal
                                 </button>
-                                <PrimaryButton :disabled="form.processing || !form.title"
+                                <button type="button"
+                                    class="rounded-md bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                                    @click="saveDraftManually"
+                                    :disabled="form.processing || !form.title"
                                     :class="{ 'opacity-25': form.processing || !form.title }">
-                                    {{ form.processing ? 'Kaydediliyor...' : submitButtonText }}
+                                    {{ form.processing ? 'Kaydediliyor...' : 'Taslak Kaydet' }}
+                                </button>
+                                <PrimaryButton :disabled="form.processing || !form.title"
+                                    :class="{ 'opacity-25': form.processing || !form.title }"
+                                    @click="form.status = 'published'">
+                                    {{ form.processing ? 'Kaydediliyor...' : (form.scheduled_at ? 'Zamanla' : 'Yayınla') }}
                                 </PrimaryButton>
                             </div>
                         </form>

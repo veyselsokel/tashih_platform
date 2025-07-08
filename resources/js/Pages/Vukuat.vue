@@ -3,57 +3,55 @@ import { ref, onMounted, computed } from 'vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import CorrectionCard from '@/Components/Vukuat/CorrectionCard.vue';
 import ImageLightbox from '@/Pages/Blog/ImageLightbox.vue';
+import vukuatData from '@/../assets/images/vukuat/vukuat.json';
 
-// Import the single available image
-import vukuatImage1 from '@/../assets/images/vukuat/vukuat-1.jpg';
-import vukuatImage2 from '@/../assets/images/vukuat/vukuat-2.jpg';
-import vukuatImage3 from '@/../assets/images/vukuat/vukuat-3.jpg';
-import vukuatImage4 from '@/../assets/images/vukuat/vukuat-4.jpg';
-import vukuatImage5 from '@/../assets/images/vukuat/vukuat-5.jpg';
-import vukuatImage6 from '@/../assets/images/vukuat/vukuat-6.jpg';
+// Import available images
+const importImages = () => {
+    const images = {};
+    const imageFiles = [1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 13, 14, 15, 16, 17, 19, 21, 23, 24, 25, 26, 27, 29, 30, 31, 34, 35, 36, 37, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 51, 53, 57];
+
+    imageFiles.forEach(id => {
+        try {
+            const ext = id === 57 ? 'png' : 'jpg';
+            images[id] = new URL(`../../assets/images/vukuat/${id}.${ext}`, import.meta.url).href;
+        } catch (error) {
+            console.warn(`Could not load image for ID ${id}`);
+        }
+    });
+
+    return images;
+};
+
+const availableImages = importImages();
 
 const isVisible = ref(false);
 const showLightbox = ref(false);
 const selectedImageIndex = ref(0);
 
-const corrections = ref([
-    {
-        id: 1,
-        image: vukuatImage1,
-        description: 'Bu örnekte, \'de\' bağlacı yanlış bir şekilde bitişik yazılmıştır. Doğrusu: "O da gelecek." olmalıdır.',
-        category: 'Bağlaç Hatası'
-    },
-    {
-        id: 2,
-        image: vukuatImage2,
-        description: 'Burada \'ki\' ilgi eki yanlış ayrı yazılmıştır. Cümledeki anlamı güçlendirmek için bitişik yazılmalıdır: "Benimki daha güzel."',
-        category: 'Ek Hatası'
-    },
-    {
-        id: 3,
-        image: vukuatImage3,
-        description: 'Noktalama işareti eksikliği cümlenin anlamını belirsizleştirmiş. Cümlenin sonuna nokta konulmalıydı.',
-        category: 'Noktalama Hatası'
-    },
-    {
-        id: 4,
-        image: vukuatImage4,
-        description: 'Bu metinde anlatım bozukluğu bulunmaktadır. Cümlenin daha akıcı ve anlaşılır olması için yeniden yapılandırılması gerekir.',
-        category: 'Anlatım Bozukluğu'
-    },
-    {
-        id: 5,
-        image: vukuatImage5,
-        description: 'Kelime yanlış anlamda kullanılmıştır. Cümlenin bağlamına uygun olmayan bir kelime seçimi yapılmıştır.',
-        category: 'Anlam Hatası'
-    },
-    {
-        id: 6,
-        image: vukuatImage6,
-        description: 'Sık yapılan bir yazım yanlışı. \'Herkes\' kelimesi \'z\' harfi ile biter, \'s\' ile değil.',
-        category: 'Yazım Yanlışı'
-    }
-]);
+// Process vukuat data and filter out unpublishable entries
+const corrections = computed(() => {
+    return vukuatData.tashih_vukuat
+        .filter(item => item.aciklama !== "Yayınlanmayacak" && availableImages[item.id])
+        .map(item => ({
+            id: item.id,
+            image: availableImages[item.id],
+            description: item.aciklama,
+            category: getCategoryFromDescription(item.aciklama)
+        }))
+        .sort((a, b) => a.id - b.id);
+});
+
+// Helper function to determine category from description
+const getCategoryFromDescription = (description) => {
+    if (description.includes('tekrar') || description.includes('Tekrar')) return 'Kelime Tekrarı';
+    if (description.includes('yanlış') || description.includes('hata')) return 'Yazım Yanlışı';
+    if (description.includes('isim') || description.includes('İsim') || description.includes('soyadı')) return 'İsim Hatası';
+    if (description.includes('virgül') || description.includes('nokta')) return 'Noktalama Hatası';
+    if (description.includes('deyim') || description.includes('kelime')) return 'Deyim/Kelime Hatası';
+    if (description.includes('çelişki') || description.includes('çelişkili')) return 'Çelişkili Bilgi';
+    if (description.includes('cümle') || description.includes('anlatım')) return 'Anlatım Bozukluğu';
+    return 'Tashih Hatası';
+};
 
 onMounted(() => {
     setTimeout(() => {
@@ -89,6 +87,11 @@ const openLightbox = (index) => {
 
             <main class="px-4 sm:px-6 lg:px-8 pb-24">
                 <div class="max-w-7xl mx-auto">
+                    <div class="text-center mb-8">
+                        <p class="text-gray-600">
+                            Toplam {{ corrections.length }} tashih örneği bulunmaktadır.
+                        </p>
+                    </div>
                     <div class="masonry-grid">
                         <div v-for="(correction, index) in corrections" :key="correction.id"
                             class="masonry-item mb-8 break-inside-avoid">
