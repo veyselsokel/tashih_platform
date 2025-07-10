@@ -80,8 +80,7 @@ const openLightbox = (index) => {
                         Vukuat: Sıkça Yapılan Hatalar
                     </h1>
                     <p class="text-lg text-gray-600 max-w-3xl mx-auto">
-                        Gerçek hayattan alınmış tashih (düzeltme) örnekleri ve hataların analizleri.
-                    </p>
+                        Yıllar içerisinde tashih servisimizde şahit olduğumuz vukuat örnekleri. </p>
                 </div>
             </header>
 
