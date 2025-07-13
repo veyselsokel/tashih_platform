@@ -40,7 +40,8 @@ class UpdateBlogPostRequest extends FormRequest
             'tags' => 'nullable|array',
             'tags.*' => 'nullable|string|max:50',
             'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-            'formatting' => 'nullable|json',
+            'remove_featured_image' => 'nullable|boolean',
+            'formatting' => 'nullable|array',
             'gallery_images' => 'nullable|array',
             'gallery_images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'gallery_captions' => 'nullable|array',
@@ -52,7 +53,7 @@ class UpdateBlogPostRequest extends FormRequest
             'category_ids' => 'nullable|array',
             'category_ids.*' => 'nullable|exists:categories,id',
             'scheduled_at' => 'nullable|date_format:Y-m-d H:i:s|after_or_equal:now',
-            'status' => 'required|in:draft,published',
+            'status' => 'nullable|in:draft,published',
         ];
     }
 
@@ -67,15 +68,22 @@ class UpdateBlogPostRequest extends FormRequest
             ]);
         }
 
+        // Handle formatting data
         if ($this->formatting && is_string($this->formatting)) {
             $decodedFormatting = json_decode($this->formatting, true);
             $this->merge([
                 'formatting' => $decodedFormatting === null && json_last_error() !== JSON_ERROR_NONE ? $this->route('blog_post')->formatting : $decodedFormatting,
             ]);
-        } elseif (!$this->has('formatting') && $this->route('blog_post')) { // Eğer formatting hiç gelmediyse ve post varsa eskisini koru
+        } elseif (!$this->has('formatting') && $this->route('blog_post')) {
              $this->merge(['formatting' => $this->route('blog_post')->formatting]);
-        } elseif (!$this->formatting) { // Eğer formatting boş geldiyse varsayılanı ata
-            $this->merge(['formatting' => json_decode('{"font":"Inter","fontSize":"16px","lineHeight":"1.5","textAlign":"left","color":"#333333"}', true)]);
+        } elseif (!$this->formatting) {
+            $this->merge(['formatting' => [
+                'font' => 'Arial',
+                'fontSize' => '16px',
+                'lineHeight' => '1.5',
+                'textAlign' => 'left',
+                'color' => '#333333'
+            ]]);
         }
 
 

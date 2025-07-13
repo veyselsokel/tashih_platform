@@ -19,12 +19,12 @@ const previousScrollPosition = ref(0);
 const isNavVisible = ref(true);
 
 const navigationItems = [
-    'İletişim',
-    'Blog',
-    'Hakkımızda',
     'Hizmetlerimiz',
-    'Vukuat',
+    'Hakkımızda',
+    'Blog',
+    'Arşivden',
     'Bulmacalar',
+    'İletişim',
 ];
 
 const turkishToEnglish = (text) => {
@@ -47,7 +47,6 @@ const navClasses = computed(() => {
         'bg-transparent': !isScrolled.value,
         'shadow-none': !isScrolled.value
     }
-    console.log('deneme');
 });
 
 const handleScroll = () => {

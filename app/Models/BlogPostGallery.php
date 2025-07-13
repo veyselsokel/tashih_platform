@@ -12,7 +12,7 @@ class BlogPostGallery extends Model
 
     protected $fillable = [
         'blog_post_id',
-        'image_path',
+        'image',
         'caption', // Resim alt yazısı
         'alt_text', // Alt metin (SEO ve erişilebilirlik için)
         'order',    // Sıralama için
@@ -33,8 +33,8 @@ class BlogPostGallery extends Model
      */
     public function getImageUrlAttribute()
     {
-        if ($this->image_path && Storage::disk('public')->exists($this->image_path)) {
-            return Storage::url($this->image_path);
+        if ($this->image && Storage::disk('public')->exists($this->image)) {
+            return Storage::url($this->image);
         }
         return null; // Veya varsayılan bir görsel URL'si
     }
@@ -47,8 +47,8 @@ class BlogPostGallery extends Model
         parent::boot();
 
         static::deleting(function ($galleryImage) {
-            if ($galleryImage->image_path && Storage::disk('public')->exists($galleryImage->image_path)) {
-                Storage::disk('public')->delete($galleryImage->image_path);
+            if ($galleryImage->image && Storage::disk('public')->exists($galleryImage->image)) {
+                Storage::disk('public')->delete($galleryImage->image);
             }
         });
     }

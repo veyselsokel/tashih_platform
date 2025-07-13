@@ -28,7 +28,7 @@ const props = defineProps({
 const form = useForm({
     title: '',
     content: '',
-    formatting: { ...defaultFormatting }, // Initialize with defaults
+    formatting: { ...defaultFormatting },
     featured_image: null,
     meta_description: '',
     tags: [],
@@ -39,7 +39,7 @@ const form = useForm({
 });
 
 // Refs
-const lastSaved = ref(null);
+
 const showMarkdownPreview = ref(false);
 const contentEditorRef = ref(null);
 
@@ -61,79 +61,41 @@ const handleFormatText = (formatter) => {
     const textarea = contentEditorRef.value;
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
+    
+    // Get the selected text exactly as it appears
     const selectedText = form.content.substring(start, end);
+    
+    // Only proceed if there's actually selected text
+    if (start === end) return;
 
+    // Apply the formatting function
     const formattedText = formatter(selectedText, form.content, start, end);
 
-    form.content = form.content.substring(0, start) + formattedText + form.content.substring(end + (formattedText.length - selectedText.length));
+    // Replace the selected text with the formatted version
+    const beforeText = form.content.substring(0, start);
+    const afterText = form.content.substring(end);
+    
+    form.content = beforeText + formattedText + afterText;
+    
+    // Restore focus and selection
     nextTick(() => {
         textarea.focus();
-        textarea.setSelectionRange(start, start + formattedText.length);
+        // Place cursor at the end of the formatted text
+        const newCursorPosition = start + formattedText.length;
+        textarea.setSelectionRange(newCursorPosition, newCursorPosition);
     });
 };
 
 // Manual save draft function
-const saveDraftManually = () => {
-    if (!form.title) {
-        alert('Lütfen başlık girin.');
-        return;
-    }
-    saveDraft();
-};
-
-// Taslak Olarak Kaydet
-const saveDraft = async () => {
-    if (!form.title || form.processing) return;
-
-    let submissionScheduledAt = null;
-    if (form.scheduled_at) {
-        submissionScheduledAt = new Date(form.scheduled_at).toISOString().slice(0, 19).replace('T', ' ');
-    }
-
-    // Determine the correct route for saving drafts.
-    // The original Create.vue used route('blog.draft')
-    // The admin setup uses route('admin.blog.store')
-    // For /blog/create/new, the route name is 'blog.store' (from BlogController)
-    // Let's assume 'blog.store' is the target for now, and it handles drafts.
-    // Or, if you have a specific draft route for non-admin, use that.
-    // For this example, I'll keep it generic and assume the store route handles it.
-
-    form.transform(data => {
-        const { gallery, ...restOfData } = data;
-        return {
-            ...restOfData,
-            status: 'draft', // Explicitly set as draft
-            scheduled_at: submissionScheduledAt,
-            gallery_images: gallery.map(item => item.file).filter(file => file instanceof File),
-            gallery_captions: gallery.map(item => item.caption || ''),
-            gallery_alts: gallery.map(item => item.alt_text || ''),
-        };
-    }).post(route('blog.store'), { // Adjusted to blog.store, assuming it handles drafts
-        preserveScroll: true,
-        preserveState: true, // Keep component state on success for drafts
-        onSuccess: (page) => {
-            lastSaved.value = new Date().toLocaleTimeString();
-            alert('Taslak başarıyla kaydedildi!');
-            // If the backend returns the created/updated post ID, you might want to update form.id
-            // For now, we just indicate it's saved.
-            // form.reset('content', 'title'); // Or just clear dirty state
-            if (page.props.flash?.success) {
-                // console.log(page.props.flash.success);
-            }
-            // To prevent "unsaved changes" message if form is no longer dirty:
-            if (form.wasSuccessful) {
-                form.recentlySuccessful = false; // Manually reset if needed, or rely on Inertia's dirty state
-            }
-        },
-        onError: (errors) => {
-            console.error('Taslak kaydetme hatası:', errors);
-        }
-    });
-};
 
 
-const submit = () => {
+
+
+
+const submit = (publish = false) => {
     if (form.processing) return;
+
+    form.status = publish ? 'published' : 'draft';
 
     let submissionScheduledAt = null;
     if (form.scheduled_at) {
@@ -158,15 +120,23 @@ const submit = () => {
             gallery_captions: gallery.map(item => item.caption || ''),
             gallery_alts: gallery.map(item => item.alt_text || ''),
         };
-    }).post(route('blog.store'), { // Using 'blog.store' from BlogController for /blog/create/new
+    }).post(route('blog.store'), { // Using correct blog route
         preserveScroll: true,
         onSuccess: () => {
-            // BlogPostController@store (or BlogController@store) handles redirection.
+            // BlogPostController@store handles redirection.
         },
         onError: (errors) => {
             console.error('Form gönderme hatası:', errors);
         }
     });
+};
+
+const saveAsDraft = () => {
+    submit(false);
+};
+
+const publishPost = () => {
+    submit(true);
 };
 
 // Lifecycle
@@ -178,12 +148,7 @@ onUnmounted(() => {
     // No cleanup needed for auto-save
 });
 
-const submitButtonText = computed(() => {
-    if (form.status === 'published') {
-        return form.scheduled_at ? 'Zamanla' : 'Yayınla';
-    }
-    return 'Taslak Olarak Kaydet';
-});
+
 
 </script>
 
@@ -228,14 +193,17 @@ const submitButtonText = computed(() => {
                                 <div v-if="!showMarkdownPreview">
                                     <textarea id="content-editor" ref="contentEditorRef" v-model="form.content"
                                         rows="15"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 whitespace-pre-wrap"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 whitespace-pre-wrap resize-y"
                                         :style="{
-                                            fontFamily: form.formatting?.font, /* Added optional chaining */
-                                            fontSize: form.formatting?.fontSize, /* Added optional chaining */
-                                            textAlign: form.formatting?.textAlign, /* Added optional chaining */
-                                            color: form.formatting?.color, /* Added optional chaining */
-                                            lineHeight: form.formatting?.lineHeight /* Added optional chaining */
-                                        }" required></textarea>
+                                            fontFamily: form.formatting?.font || 'Arial',
+                                            fontSize: form.formatting?.fontSize || '16px',
+                                            textAlign: form.formatting?.textAlign || 'left',
+                                            color: form.formatting?.color || '#333333',
+                                            lineHeight: form.formatting?.lineHeight || '1.5',
+                                            minHeight: '200px'
+                                        }" 
+                                        placeholder="Blog içeriğinizi buraya yazın... Markdown formatını destekler."
+                                        required></textarea>
                                 </div>
                                 <MarkdownPreview v-else :content="form.content" :formatting="form.formatting" />
                                 <InputError class="mt-2" :message="form.errors.content" />
@@ -276,30 +244,12 @@ const submitButtonText = computed(() => {
                                 :content="form.content" :tags="form.tags" :has-featured-image="!!form.featured_image" />
                             <InputError class="mt-2" :message="form.errors.meta_description" />
 
+                            
+
+                            
                             <div class="space-y-4 rounded-md border border-gray-200 p-4">
                                 <h3 class="text-lg font-medium leading-6 text-gray-900">Yayınlama Seçenekleri</h3>
-                                <fieldset class="mt-2">
-                                    <legend class="sr-only">Yayın durumu</legend>
-                                    <div class="space-y-2 sm:flex sm:items-center sm:space-x-10 sm:space-y-0">
-                                        <div class="flex items-center">
-                                            <input id="status_draft" value="draft" type="radio" v-model="form.status"
-                                                class="h-4 w-4 border-gray-300 text-orange-500 focus:ring-orange-500">
-                                            <label for="status_draft"
-                                                class="ml-3 block text-sm font-medium text-gray-700">Taslak</label>
-                                        </div>
-                                        <div class="flex items-center">
-                                            <input id="status_published" value="published" type="radio"
-                                                v-model="form.status"
-                                                class="h-4 w-4 border-gray-300 text-orange-500 focus:ring-orange-500">
-                                            <label for="status_published"
-                                                class="ml-3 block text-sm font-medium text-gray-700">Yayınla /
-                                                Zamanla</label>
-                                        </div>
-                                    </div>
-                                    <InputError class="mt-2" :message="form.errors.status" />
-                                </fieldset>
-
-                                <div v-if="form.status === 'published'">
+                                <div>
                                     <InputLabel for="scheduled_at" value="Yayınlanma Tarihi (İsteğe Bağlı)" />
                                     <TextInput id="scheduled_at" type="datetime-local"
                                         class="mt-1 block w-full sm:w-auto" v-model="form.scheduled_at" />
@@ -310,9 +260,6 @@ const submitButtonText = computed(() => {
                                 </div>
                             </div>
 
-                            <div v-if="lastSaved" class="text-sm text-gray-500">
-                                Son otomatik taslak kayıt: {{ lastSaved }}
-                            </div>
                             <div v-if="form.isDirty && form.title" class="text-sm text-orange-600">
                                 Kaydedilmemiş değişiklikler var.
                             </div>
@@ -320,19 +267,17 @@ const submitButtonText = computed(() => {
                             <div class="flex items-center justify-end space-x-4 border-t border-gray-200 pt-5">
                                 <button type="button"
                                     class="rounded-md bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                                    @click="$inertia.visit(route('admin.blog.index'))"> İptal
-                                </button>
-                                <button type="button"
-                                    class="rounded-md bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-                                    @click="saveDraftManually"
-                                    :disabled="form.processing || !form.title"
-                                    :class="{ 'opacity-25': form.processing || !form.title }">
-                                    {{ form.processing ? 'Kaydediliyor...' : 'Taslak Kaydet' }}
+                                    @click="$inertia.visit(route('blog.index'))"> İptal
                                 </button>
                                 <PrimaryButton :disabled="form.processing || !form.title"
                                     :class="{ 'opacity-25': form.processing || !form.title }"
-                                    @click="form.status = 'published'">
-                                    {{ form.processing ? 'Kaydediliyor...' : (form.scheduled_at ? 'Zamanla' : 'Yayınla') }}
+                                    @click="saveAsDraft">
+                                    {{ form.processing ? 'Kaydediliyor...' : 'Taslak Kaydet' }}
+                                </PrimaryButton>
+                                <PrimaryButton :disabled="form.processing || !form.title"
+                                    :class="{ 'opacity-25': form.processing || !form.title }"
+                                    @click="publishPost">
+                                    {{ form.processing ? 'Kaydediliyor...' : 'Yayınla' }}
                                 </PrimaryButton>
                             </div>
                         </form>

@@ -19,7 +19,6 @@ return new class extends Migration
             $table->json('tags')->nullable();
             $table->boolean('is_published')->default(false);
             $table->timestamp('published_at')->nullable();
-            $table->boolean('is_draft')->default(true);
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });

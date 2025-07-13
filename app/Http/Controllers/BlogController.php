@@ -16,7 +16,7 @@ class BlogController extends Controller
     public function index()
     {
         $posts = BlogPost::with('user')
-            ->where('is_published', true)
+            ->published()
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
@@ -70,8 +70,7 @@ class BlogController extends Controller
             'gallery_alts.*' => 'nullable|string|max:255',
         ]);
 
-        // Prepare data for database insertion.
-        // CRITICAL: Ensure 'status' is NOT a key here if it's not a DB column.
+        // Prepare data for database insertion using the new status field
         $dataForCreate = [
             'title' => $validatedRequestData['title'],
             'content' => $validatedRequestData['content'],
@@ -89,8 +88,7 @@ class BlogController extends Controller
             'featured_image' => null,
             'scheduled_at' => null,
             'published_at' => null,
-            'is_published' => false, // DB column
-            'is_draft' => true,    // DB column
+            'status' => 'draft', // Using the new status field
         ];
 
         if ($request->hasFile('featured_image')) {
@@ -101,14 +99,9 @@ class BlogController extends Controller
         $statusInput = $validatedRequestData['status']; // This is 'draft' or 'published' from frontend
         $isActuallyPublished = ($statusInput === 'published');
 
-        // Set database columns based on the logic derived from $statusInput
-        // Ensure your BlogPost model's $fillable array includes these actual DB columns:
-        // 'is_published', 'is_draft', 'published_at', 'scheduled_at'.
-        // And critically, ensure 'status' is NOT in $fillable if it's not a DB column.
-
+        // Set status and related fields based on publication status
         if ($isActuallyPublished) {
-            $dataForCreate['is_draft'] = false;
-            $dataForCreate['is_published'] = true;
+            $dataForCreate['status'] = 'published';
 
             if (!empty($validatedRequestData['scheduled_at'])) {
                 try {
@@ -118,8 +111,7 @@ class BlogController extends Controller
                     if (now()->gte($scheduledTime)) {
                         $dataForCreate['published_at'] = $scheduledTime;
                     } else {
-                        $dataForCreate['is_published'] = false;
-                        $dataForCreate['is_draft'] = true;
+                        $dataForCreate['status'] = 'draft';
                         $dataForCreate['published_at'] = null;
                     }
                 } catch (\Exception $e) {
@@ -132,8 +124,7 @@ class BlogController extends Controller
                 $dataForCreate['scheduled_at'] = null;
             }
         } else { // It's a draft
-            $dataForCreate['is_draft'] = true;
-            $dataForCreate['is_published'] = false;
+            $dataForCreate['status'] = 'draft';
             $dataForCreate['published_at'] = null;
             $dataForCreate['scheduled_at'] = null;
         }
@@ -154,7 +145,7 @@ class BlogController extends Controller
                     $galleryPath = $file->store('blog/gallery', 'public');
                     if (method_exists($blogPost, 'gallery')) {
                         $blogPost->gallery()->create([
-                            'image_path' => $galleryPath,
+                            'image' => $galleryPath,
                             'caption' => $validatedRequestData['gallery_captions'][$index] ?? null,
                             'alt_text' => $validatedRequestData['gallery_alts'][$index] ?? $blogPost->title . ' galeri ' . ($index + 1),
                             'order' => $index + 1,
@@ -339,7 +330,7 @@ class BlogController extends Controller
                  try {
                     $galleryPath = $file->store('blog/gallery', 'public');
                     $post->gallery()->create([
-                        'image_path' => $galleryPath,
+                        'image' => $galleryPath,
                         'caption' => $validatedRequestData['gallery_captions'][$index] ?? null,
                         'alt_text' => $validatedRequestData['gallery_alts'][$index] ?? $post->title . ' galeri ' . ($order + $index + 1),
                         'order' => $order + $index + 1,

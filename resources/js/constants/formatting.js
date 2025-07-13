@@ -22,15 +22,6 @@ export const defaultFormatting = {
     font: 'Arial',
     fontSize: '16px',
     textAlign: 'left',
-    color: '#000000',
-    lineHeight: '1.5',
-    bold: false,
-    italic: false,
-    underline: false,
-    strikethrough: false,
-    bulletList: false,
-    numberedList: false,
-    blockquote: false,
-    codeBlock: false,
-    link: false
+    color: '#333333',
+    lineHeight: '1.5'
 };

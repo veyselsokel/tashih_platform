@@ -23,33 +23,31 @@ const props = defineProps({
 });
 
 const form = useForm({
-    _method: 'PUT', // Güncelleme için
+    _method: 'PUT',
     title: props.blogPost.title,
     content: props.blogPost.content,
-    formatting: props.blogPost.formatting || { /* varsayılan formatlama */ },
+    formatting: props.blogPost.formatting || {
+        font: 'Arial',
+        fontSize: '16px',
+        lineHeight: '1.5',
+        textAlign: 'left',
+        color: '#333333'
+    },
     meta_description: props.blogPost.meta_description || '',
     tags: props.blogPost.tags || [],
     category_ids: props.blogPost.category_ids || [],
-    // Backend YYYY-MM-DD HH:MM:SS gönderiyor, datetime-local YYYY-MM-DDTHH:MM bekliyor
     scheduled_at: props.blogPost.scheduled_at ? props.blogPost.scheduled_at.replace(' ', 'T').substring(0, 16) : '',
     status: props.blogPost.status || 'draft',
-
-    featured_image: null, // Yeni yüklenecek öne çıkan görsel (File object)
-    remove_featured_image: false, // Mevcut öne çıkan görseli silmek için bayrak
-
-    // ImageUploader bu 'gallery' dizisini yönetecek.
-    // Başlangıçta props.blogPost.gallery ile doldurulur.
-    // Elemanlar:
-    // - Mevcut: { id: Number, image_url: String, caption: String, alt_text: String, markedForRemoval?: Boolean }
-    // - Yeni: { file: File, caption: String, alt_text: String, preview: String }
+    featured_image: null,
+    remove_featured_image: false,
     gallery: props.blogPost.gallery?.map(item => ({
         id: item.id,
-        image_url: item.image_url, // ImageUploader'ın göstermesi için
-        preview: item.image_url, // ImageUploader'ın göstermesi için
+        image_url: item.image_url,
+        preview: item.image_url,
         caption: item.caption || '',
         alt_text: item.alt_text || '',
-        order: item.order, // Mevcut sıralama
-        markedForRemoval: false, // Silinmek üzere işaretlendi mi?
+        order: item.order,
+        markedForRemoval: false,
     })) || [],
 });
 
@@ -75,19 +73,36 @@ const handleFormatText = (formatter) => {
     const textarea = contentEditorRef.value;
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
+    
+    // Get the selected text exactly as it appears
     const selectedText = form.content.substring(start, end);
+    
+    // Only proceed if there's actually selected text
+    if (start === end) return;
+
+    // Apply the formatting function
     const formattedText = formatter(selectedText, form.content, start, end);
 
-    form.content = form.content.substring(0, start) + formattedText + form.content.substring(end + (formattedText.length - selectedText.length));
+    // Replace the selected text with the formatted version
+    const beforeText = form.content.substring(0, start);
+    const afterText = form.content.substring(end);
+    
+    form.content = beforeText + formattedText + afterText;
+    
+    // Restore focus and selection
     nextTick(() => {
         textarea.focus();
-        textarea.setSelectionRange(start, start + formattedText.length);
+        // Place cursor at the end of the formatted text
+        const newCursorPosition = start + formattedText.length;
+        textarea.setSelectionRange(newCursorPosition, newCursorPosition);
     });
 };
 
 // Formu Gönderme
-const submit = () => {
+const submit = (publish = false) => {
     if (form.processing) return;
+
+    form.status = publish ? 'published' : 'draft';
 
     let submissionScheduledAt = null;
     if (form.scheduled_at) {
@@ -127,7 +142,7 @@ const submit = () => {
         return transformedData;
     });
 
-    form.post(route('admin.blog.update', props.blogPost.id), {
+    form.post(route('blog.update', props.blogPost.slug), {
         preserveScroll: true,
         onSuccess: () => {
             // Başarı mesajı controller'dan flash message olarak gelebilir.
@@ -141,19 +156,22 @@ const submit = () => {
     });
 };
 
-const submitButtonText = computed(() => {
-    if (form.status === 'published') {
-        return form.scheduled_at ? 'Değişiklikleri Zamanla' : 'Değişiklikleri Yayınla';
-    }
-    return 'Değişiklikleri Kaydet (Taslak)';
-});
+const saveAsDraft = () => {
+    submit(false);
+};
+
+const publishPost = () => {
+    submit(true);
+};
+
+
 
 const confirmPostDeletion = () => {
     confirmingPostDeletion.value = true;
 };
 
 const deletePost = () => {
-    form.delete(route('admin.blog.destroy', props.blogPost.id), {
+    form.delete(route('blog.destroy', props.blogPost.slug), {
         preserveScroll: true,
         onSuccess: () => {
             confirmingPostDeletion.value = false;
@@ -211,14 +229,17 @@ const deletePost = () => {
                                 <div v-if="!showMarkdownPreview">
                                     <textarea id="content-editor" ref="contentEditorRef" v-model="form.content"
                                         rows="15"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 whitespace-pre-wrap"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 whitespace-pre-wrap resize-y"
                                         :style="{
-                                            fontFamily: form.formatting.font,
-                                            fontSize: form.formatting.fontSize,
-                                            textAlign: form.formatting.textAlign,
-                                            color: form.formatting.color,
-                                            lineHeight: form.formatting.lineHeight
-                                        }" required></textarea>
+                                            fontFamily: form.formatting?.font || 'Arial',
+                                            fontSize: form.formatting?.fontSize || '16px',
+                                            textAlign: form.formatting?.textAlign || 'left',
+                                            color: form.formatting?.color || '#333333',
+                                            lineHeight: form.formatting?.lineHeight || '1.5',
+                                            minHeight: '200px'
+                                        }" 
+                                        placeholder="Blog içeriğinizi buraya yazın... Markdown formatını destekler."
+                                        required></textarea>
                                 </div>
                                 <MarkdownPreview v-else :content="form.content" :formatting="form.formatting" />
                                 <InputError class="mt-2" :message="form.errors.content" />
@@ -260,31 +281,10 @@ const deletePost = () => {
                                 :has-featured-image="!!(props.blogPost.featured_image_url || form.featured_image)" />
                             <InputError class="mt-2" :message="form.errors.meta_description" />
 
+                            
                             <div class="space-y-4 rounded-md border border-gray-200 p-4">
                                 <h3 class="text-lg font-medium leading-6 text-gray-900">Yayınlama Seçenekleri</h3>
-                                <fieldset class="mt-2">
-                                    <legend class="sr-only">Yayın durumu</legend>
-                                    <div class="space-y-2 sm:flex sm:items-center sm:space-x-10 sm:space-y-0">
-                                        <div class="flex items-center">
-                                            <input id="status_draft_edit" value="draft" type="radio"
-                                                v-model="form.status"
-                                                class="h-4 w-4 border-gray-300 text-orange-500 focus:ring-orange-500">
-                                            <label for="status_draft_edit"
-                                                class="ml-3 block text-sm font-medium text-gray-700">Taslak</label>
-                                        </div>
-                                        <div class="flex items-center">
-                                            <input id="status_published_edit" value="published" type="radio"
-                                                v-model="form.status"
-                                                class="h-4 w-4 border-gray-300 text-orange-500 focus:ring-orange-500">
-                                            <label for="status_published_edit"
-                                                class="ml-3 block text-sm font-medium text-gray-700">Yayınla /
-                                                Zamanla</label>
-                                        </div>
-                                    </div>
-                                    <InputError class="mt-2" :message="form.errors.status" />
-                                </fieldset>
-
-                                <div v-if="form.status === 'published'">
+                                <div>
                                     <InputLabel for="scheduled_at_edit" value="Yayınlanma Tarihi (İsteğe Bağlı)" />
                                     <TextInput id="scheduled_at_edit" type="datetime-local"
                                         class="mt-1 block w-full sm:w-auto" v-model="form.scheduled_at" />
@@ -307,13 +307,19 @@ const deletePost = () => {
                                     </DangerButton>
                                 </div>
                                 <div class="flex space-x-4">
-                                    <Link :href="route('admin.blog.index')"
+                                    <Link :href="route('blog.index')"
                                         class="rounded-md bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                                     İptal
                                     </Link>
                                     <PrimaryButton :disabled="form.processing || !form.title"
-                                        :class="{ 'opacity-25': form.processing || !form.title }">
-                                        {{ form.processing ? 'Kaydediliyor...' : submitButtonText }}
+                                        :class="{ 'opacity-25': form.processing || !form.title }"
+                                        @click="saveAsDraft">
+                                        {{ form.processing ? 'Kaydediliyor...' : 'Taslak Kaydet' }}
+                                    </PrimaryButton>
+                                    <PrimaryButton :disabled="form.processing || !form.title"
+                                        :class="{ 'opacity-25': form.processing || !form.title }"
+                                        @click="publishPost">
+                                        {{ form.processing ? 'Kaydediliyor...' : 'Yayınla' }}
                                     </PrimaryButton>
                                 </div>
                             </div>

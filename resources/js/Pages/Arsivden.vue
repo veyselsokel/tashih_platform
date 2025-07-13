@@ -77,7 +77,7 @@ const openLightbox = (index) => {
             <header class="relative text-center px-6 py-24 md:py-32">
                 <div class="max-w-4xl mx-auto">
                     <h1 class="text-4xl md:text-5xl font-extrabold text-gray-800 leading-tight mb-4">
-                        Vukuat: Sıkça Yapılan Hatalar
+                        Tashih arşivimizden
                     </h1>
                     <p class="text-lg text-gray-600 max-w-3xl mx-auto">
                         Yıllar içerisinde tashih servisimizde şahit olduğumuz vukuat örnekleri. </p>

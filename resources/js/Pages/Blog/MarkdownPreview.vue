@@ -6,15 +6,7 @@ const md = new MarkdownIt({
     html: true,
     linkify: true,
     typographer: true,
-    breaks: true,
-    highlight: function (str, lang) {
-        if (lang && hljs.getLanguage(lang)) {
-            try {
-                return hljs.highlight(str, { language: lang }).value;
-            } catch (__) { }
-        }
-        return ''; // use external default escaping
-    }
+    breaks: true
 });
 
 const props = defineProps({
@@ -29,28 +21,52 @@ const props = defineProps({
 });
 
 const renderedContent = computed(() => {
-    return md.render(props.content);
+    if (!props.content) return '';
+    
+    // First process the content to handle our custom formatting
+    let processedContent = props.content;
+    
+    // Convert markdown and preserve HTML color spans
+    let rendered = md.render(processedContent);
+    
+    return rendered;
 });
 
 const previewStyles = computed(() => {
     return {
-        fontFamily: props.formatting.font,
-        fontSize: props.formatting.fontSize,
-        textAlign: props.formatting.textAlign,
-        color: props.formatting.color,
-        lineHeight: props.formatting.lineHeight
+        fontFamily: props.formatting.font || 'Arial',
+        fontSize: props.formatting.fontSize || '16px',
+        textAlign: props.formatting.textAlign || 'left',
+        color: props.formatting.color || '#333333',
+        lineHeight: props.formatting.lineHeight || '1.5'
     };
+});
+
+const containerClasses = computed(() => {
+    const classes = ['prose', 'max-w-none', 'rounded-md', 'border', 'p-4', 'preview-content'];
+    
+    // Add content type specific classes
+    if (props.formatting.contentStyle) {
+        classes.push(`${props.formatting.contentStyle}-content`);
+    }
+    
+    return classes.join(' ');
 });
 </script>
 
 <template>
-    <div class="prose max-w-none rounded-md border p-4" :style="previewStyles" v-html="renderedContent"></div>
+    <div :class="containerClasses" :style="previewStyles" v-html="renderedContent"></div>
 </template>
 
-<style>
+<style scoped>
+.preview-content {
+    min-height: 200px;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+
 .prose {
-    max-width: 65ch;
-    margin: 0 auto;
+    max-width: none;
 }
 
 .prose h1 {
@@ -108,5 +124,35 @@ const previewStyles = computed(() => {
 
 .prose thead {
     @apply bg-gray-50;
+}
+
+/* Handle inline color spans */
+.prose span[style*="color"] {
+    display: inline;
+}
+
+/* Content type specific styles */
+.poem-content {
+    @apply font-serif text-lg leading-relaxed text-center whitespace-pre-wrap;
+    padding: 0 2rem;
+}
+
+.code-content {
+    @apply font-mono text-base leading-normal bg-gray-50 p-4 rounded;
+}
+
+.quote-content {
+    @apply font-serif text-lg leading-relaxed italic border-l-4 border-orange-500 pl-4 my-4;
+}
+
+/* Improved readability for preview */
+.preview-content p:last-child {
+    margin-bottom: 0;
+}
+
+.preview-content:empty::before {
+    content: "Önizleme için içerik yazın...";
+    color: #9CA3AF;
+    font-style: italic;
 }
 </style>

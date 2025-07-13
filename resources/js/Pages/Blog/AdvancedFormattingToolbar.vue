@@ -29,27 +29,53 @@ const handleResize = () => {
     isMobileView.value = window.innerWidth < 768;
 };
 
+// Keyboard shortcuts handler
+const handleKeyboardShortcuts = (event) => {
+    if ((event.metaKey || event.ctrlKey)) {
+        switch (event.key.toLowerCase()) {
+            case 'b':
+                event.preventDefault();
+                handleFormat(formatTools[0].action); // Bold
+                break;
+            case 'i':
+                event.preventDefault();
+                handleFormat(formatTools[1].action); // Italic
+                break;
+            case 'k':
+                event.preventDefault();
+                handleFormat(formatTools[2].action); // Link
+                break;
+            case '`':
+                event.preventDefault();
+                handleFormat(formatTools[3].action); // Code
+                break;
+        }
+    }
+};
+
 onMounted(() => {
     document.addEventListener('selectionchange', updateSelectedText);
     window.addEventListener('resize', handleResize);
+    document.addEventListener('keydown', handleKeyboardShortcuts);
 });
 
 onUnmounted(() => {
     document.removeEventListener('selectionchange', updateSelectedText);
     window.removeEventListener('resize', handleResize);
+    document.removeEventListener('keydown', handleKeyboardShortcuts);
 });
 
 const updateSelectedText = () => {
-    selectedText.value = document?.getSelection()?.toString() || '';
+    const selection = document?.getSelection();
+    selectedText.value = selection?.toString() || '';
 };
 
 const handleColorChange = (color) => {
-    if (selectedText.value) {
-        handleFormat((text) => `<span style="color: ${color}">${text}</span>`);
-    } else {
-        updateStyle('color', color);
-    }
+    // Always update the global color setting
+    updateStyle('color', color);
 };
+
+
 const contentTypes = [
     { id: 'normal', label: 'Normal Metin', icon: Type },
     { id: 'poem', label: 'Şiir', icon: Music },
@@ -127,57 +153,69 @@ const formatTools = [
         icon: Bold,
         label: 'Kalın',
         shortcut: '⌘+B',
-        action: (text) => `**${text.trim()}**`
+        action: (text, fullContent, start, end) => {
+            // Preserve exact text without trimming to maintain word boundaries
+            return `**${text}**`;
+        }
     },
     {
         icon: Italic,
         label: 'İtalik',
         shortcut: '⌘+I',
-        action: (text) => `*${text.trim()}*`
+        action: (text, fullContent, start, end) => {
+            // Preserve exact text without trimming to maintain word boundaries
+            return `*${text}*`;
+        }
     },
     {
         icon: Link,
         label: 'Bağlantı',
         shortcut: '⌘+K',
-        action: (text) => {
+        action: (text, fullContent, start, end) => {
             const url = prompt('Bağlantı URL:', 'https://');
-            return url ? `[${text.trim() || 'bağlantı'}](${url})` : text;
+            return url ? `[${text || 'bağlantı'}](${url})` : text;
         }
     },
     {
         icon: Code,
         label: 'Kod',
         shortcut: '⌘+`',
-        action: (text) => {
+        action: (text, fullContent, start, end) => {
             if (text.includes('\n')) {
-                return `\`\`\`\n${text.trim()}\n\`\`\``;
+                return `\`\`\`\n${text}\n\`\`\``;
             }
-            return `\`${text.trim()}\``;
+            return `\`${text}\``;
         }
     },
     {
         icon: Quote,
         label: 'Alıntı',
         shortcut: '⌘+Q',
-        action: (text) => text.split('\n').map(line => `> ${line}`).join('\n')
+        action: (text, fullContent, start, end) => {
+            return text.split('\n').map(line => `> ${line}`).join('\n');
+        }
     },
     {
         icon: List,
         label: 'Liste',
         shortcut: '⌘+L',
-        action: (text) => text.split('\n').map(line => `- ${line.trim()}`).join('\n')
+        action: (text, fullContent, start, end) => {
+            return text.split('\n').map(line => `- ${line}`).join('\n');
+        }
     },
     {
         icon: ListOrdered,
         label: 'Numaralı Liste',
         shortcut: '⌘+O',
-        action: (text) => text.split('\n').map((line, i) => `${i + 1}. ${line.trim()}`).join('\n')
+        action: (text, fullContent, start, end) => {
+            return text.split('\n').map((line, i) => `${i + 1}. ${line}`).join('\n');
+        }
     },
     {
         icon: Palette,
         label: 'Metin Rengi',
         shortcut: '⌘+Shift+C',
-        action: (text) => {
+        action: (text, fullContent, start, end) => {
             const color = prompt('Renk kodunu girin (örn: #FF0000)', '#000000');
             if (color) {
                 return `<span style="color: ${color}">${text}</span>`;
@@ -211,7 +249,9 @@ const handleFormat = (formatter) => {
             <div class="flex items-center gap-2">
                 <span class="text-sm font-medium text-gray-700 whitespace-nowrap">İçerik Türü:</span>
                 <div class="flex flex-wrap gap-2">
-                    <button v-for="type in contentTypes" :key="type.id" @click="applyContentType(type.id)" :class="[
+                    <button v-for="type in contentTypes" :key="type.id" 
+                        type="button"
+                        @click="applyContentType(type.id)" :class="[
                         'flex items-center px-3 py-1.5 rounded-md transition-colors min-w-[100px] justify-center',
                         activeContentType === type.id
                             ? 'bg-orange-100 text-orange-700'
@@ -222,7 +262,7 @@ const handleFormat = (formatter) => {
                     </button>
                 </div>
             </div>
-            <button @click="showPreview = !showPreview"
+            <button type="button" @click="showPreview = !showPreview"
                 class="sm:ml-auto flex items-center justify-center px-3 py-1.5 rounded-md bg-white hover:bg-gray-100">
                 <Monitor class="w-4 h-4 mr-2" />
                 <span class="text-sm">{{ showPreview ? 'Düzenle' : 'Önizle' }}</span>
@@ -250,6 +290,7 @@ const handleFormat = (formatter) => {
                     <TextSelect class="w-4 h-4 text-gray-500" />
                     <div class="flex-1 grid grid-cols-2 sm:grid-cols-4 gap-1">
                         <button v-for="option in lineHeightOptions" :key="option.value"
+                            type="button"
                             @click="updateStyle('lineHeight', option.value)" :class="[
                                 'px-2 py-1 text-xs rounded transition-colors',
                                 modelValue.lineHeight === option.value
@@ -265,6 +306,7 @@ const handleFormat = (formatter) => {
             <div class="space-y-4">
                 <div class="flex justify-center space-x-1">
                     <button v-for="align in ['left', 'center', 'right']" :key="align"
+                        type="button"
                         @click="updateStyle('textAlign', align)" :class="[
                             'p-2 rounded-md transition-colors flex-1',
                             modelValue.textAlign === align
@@ -277,18 +319,21 @@ const handleFormat = (formatter) => {
                 </div>
 
                 <div class="color-picker-container">
-                    <div class="p-2 rounded-lg bg-gray-50">
-                        <div class="flex items-center justify-between mb-2 flex-wrap gap-2">
+                    <div class="p-3 rounded-lg bg-gray-50 border">
+                        <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
                             <span class="text-sm font-medium text-gray-700">Metin Rengi</span>
                             <div class="flex items-center space-x-2">
-                                <div class="w-6 h-6 rounded border" :style="{ backgroundColor: modelValue.color }">
+                                <div class="w-7 h-7 rounded-md border-2 border-gray-300 shadow-sm" 
+                                     :style="{ backgroundColor: modelValue.color }"
+                                     :title="`Mevcut renk: ${modelValue.color}`">
                                 </div>
-                                <span class="text-xs font-medium">{{ modelValue.color }}</span>
+                                <span class="text-xs font-mono font-medium bg-white px-2 py-1 rounded border">{{ modelValue.color }}</span>
                             </div>
                         </div>
 
                         <div class="grid grid-cols-5 gap-2">
                             <button v-for="color in presetColors" :key="color.value"
+                                type="button"
                                 @click="handleColorChange(color.value)"
                                 class="w-8 h-8 rounded-lg border-2 transition-all hover:scale-110 relative group"
                                 :class="modelValue.color === color.value ? 'border-orange-500 scale-110' : 'border-transparent'"
@@ -301,16 +346,46 @@ const handleFormat = (formatter) => {
                         </div>
 
                         <div class="mt-3 flex items-center gap-3">
-                            <div class="flex flex-1">
+                            <div class="flex flex-1 items-center">
                                 <input type="color" :value="modelValue.color"
-                                    @input="handleColorChange($event.target.value)" class="custom-color-input" />
-                                <div class="ml-2">
-                                    <span class="text-xs font-medium text-gray-700">Özel Renk</span>
+                                    @input="handleColorChange($event.target.value)" 
+                                    class="custom-color-input" 
+                                    title="Özel renk seç" />
+                                <div class="ml-3 flex-1">
+                                    <span class="text-xs font-medium text-gray-700">Özel Renk Seçici</span>
                                     <div class="text-xs text-gray-500">
-                                        {{ selectedText ? 'Seçili metne uygulanacak' : 'Tüm metne uygulanacak' }}
+                                        {{ selectedText.trim() ? `"${selectedText.trim().substring(0, 20)}${selectedText.trim().length > 20 ? '...' : ''}" seçili metne uygulanacak` : 'Genel metin rengini değiştirir' }}
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        
+                        <!-- Sample Text Preview -->
+                        <div class="mt-3 p-2 bg-white rounded border">
+                            <div class="text-xs text-gray-500 mb-1">Renk Önizlemesi:</div>
+                            <div class="text-sm" :style="{ 
+                                color: modelValue.color, 
+                                fontFamily: modelValue.font,
+                                fontSize: modelValue.fontSize 
+                            }">
+                                Bu yazı şu anki renk ayarlarınızla görüntüleniyor.
+                            </div>
+                        </div>
+
+                        <!-- Color Actions -->
+                        <div class="mt-3 flex justify-between items-center">
+                            <button type="button" 
+                                v-if="selectedText.trim()"
+                                @click="clearInlineColor()"
+                                class="text-xs text-red-500 hover:text-red-700 underline">
+                                Seçili metindeki rengi temizle
+                            </button>
+                            <div v-else></div>
+                            <button type="button" 
+                                @click="handleColorChange('#333333')"
+                                class="text-xs text-gray-500 hover:text-gray-700 underline">
+                                Varsayılan renge dön
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -318,7 +393,9 @@ const handleFormat = (formatter) => {
         </div>
 
         <div class="flex flex-wrap gap-2 p-4 border rounded-lg">
-            <button v-for="tool in formatTools" :key="tool.label" @click="handleFormat(tool.action)"
+            <button v-for="tool in formatTools" :key="tool.label" 
+                type="button"
+                @click="handleFormat(tool.action)"
                 class="format-tool group relative">
                 <div class="p-2 rounded-md bg-gray-100 hover:bg-gray-200 transition-colors">
                     <component :is="tool.icon" class="w-4 h-4" />

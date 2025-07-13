@@ -31,7 +31,7 @@ class StoreBlogPostRequest extends FormRequest
             'tags' => 'nullable|array',
             'tags.*' => 'nullable|string|max:50', // Her bir etiket için
             'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048', // Max 2MB
-            'formatting' => 'nullable|json',
+            'formatting' => 'nullable|array',
             'gallery_images' => 'nullable|array',
             'gallery_images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048', // Her bir galeri görseli için
             'gallery_captions' => 'nullable|array',
@@ -41,7 +41,7 @@ class StoreBlogPostRequest extends FormRequest
             'category_ids' => 'nullable|array', // Kategori ID'leri
             'category_ids.*' => 'nullable|exists:categories,id', // Her bir kategori ID'si categories tablosunda var olmalı
             'scheduled_at' => 'nullable|date_format:Y-m-d H:i:s|after_or_equal:now', // Geçmiş bir tarih olamaz
-            'status' => 'required|in:draft,published', // Durum: taslak veya yayınlanmış
+            'status' => 'nullable|in:draft,published', // Durum: taslak veya yayınlanmış
         ];
     }
 
@@ -55,14 +55,20 @@ class StoreBlogPostRequest extends FormRequest
                 'slug' => Str::slug($this->title),
             ]);
         }
-        // Gelen 'formatting' string ise JSON'a çevir (veya null bırak)
+        // Handle formatting data
         if ($this->formatting && is_string($this->formatting)) {
             $decodedFormatting = json_decode($this->formatting, true);
             $this->merge([
                 'formatting' => $decodedFormatting === null && json_last_error() !== JSON_ERROR_NONE ? null : $decodedFormatting,
             ]);
         } elseif (!$this->formatting) {
-             $this->merge(['formatting' => json_decode('{"font":"Inter","fontSize":"16px","lineHeight":"1.5","textAlign":"left","color":"#333333"}', true)]);
+             $this->merge(['formatting' => [
+                'font' => 'Arial',
+                'fontSize' => '16px',
+                'lineHeight' => '1.5',
+                'textAlign' => 'left',
+                'color' => '#333333'
+             ]]);
         }
 
         // Gelen 'tags' string ise array'e çevir

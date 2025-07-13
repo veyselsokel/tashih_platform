@@ -55,9 +55,9 @@ Route::get('/hizmetlerimiz', function () {
     return Inertia::render('Services');
 })->name('services');
 
-Route::get('/vukuat', function () {
-    return Inertia::render('Vukuat');
-})->name('vukuat');
+Route::get('/arsivden', function () {
+    return Inertia::render('Arsivden');
+})->name('arsivden');
 
 // Blog Rotaları
 Route::prefix('blog')->name('blog.')->group(function () {

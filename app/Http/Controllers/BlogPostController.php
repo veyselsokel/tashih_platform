@@ -36,16 +36,12 @@ class BlogPostController extends Controller
 
         // Durum filtresi (published, draft)
         if ($request->has('status') && in_array($request->status, ['published', 'draft'])) {
-            if ($request->status === 'published') {
-                $query->published();
-            } else {
-                $query->drafts();
-            }
+            $query->where('status', $request->status);
         }
 
         $blogPosts = $query->paginate(10)->withQueryString();
 
-        return Inertia::render('Admin/Blog/Index', [
+        return Inertia::render('Blog/Index', [
             'blogPosts' => $blogPosts,
             'filters' => $request->only(['search', 'status']),
             'can' => [
@@ -62,10 +58,10 @@ class BlogPostController extends Controller
     {
         $this->authorize('create', BlogPost::class); // Policy
 
-        return Inertia::render('Admin/Blog/Create', [
-            'categories' => Category::select('id', 'name')->orderBy('name')->get(), // Kategorileri forma gönder
+        return Inertia::render('Blog/Create', [
+            'categories' => Category::select('id', 'name')->orderBy('name')->get(),
             'can' => [
-                'publish_blog_post' => $request->user()->can('publish', BlogPost::class), // Örnek yetki
+                'publish_blog_post' => $request->user()->can('publish', BlogPost::class),
             ]
         ]);
     }
@@ -87,9 +83,15 @@ class BlogPostController extends Controller
             $blogPost->content = $validatedData['content'];
             $blogPost->meta_description = $validatedData['meta_description'] ?? null;
             $blogPost->tags = $validatedData['tags'] ?? [];
-            $blogPost->formatting = $validatedData['formatting'] ?? json_decode('{"font":"Inter","fontSize":"16px","lineHeight":"1.5","textAlign":"left","color":"#333333"}', true);
+            $blogPost->formatting = $validatedData['formatting'] ?? [
+                'font' => 'Arial',
+                'fontSize' => '16px',
+                'lineHeight' => '1.5',
+                'textAlign' => 'left',
+                'color' => '#333333'
+            ];
             $blogPost->scheduled_at = isset($validatedData['scheduled_at']) ? Carbon::parse($validatedData['scheduled_at']) : null;
-            $blogPost->status = 'draft'; // Varsayılan olarak taslak
+            $blogPost->status = $validatedData['status'] ?? 'draft';
 
             // Öne çıkan görsel yükleme
             if ($request->hasFile('featured_image')) {
@@ -109,7 +111,7 @@ class BlogPostController extends Controller
                 foreach ($request->file('gallery_images') as $index => $file) {
                     $galleryPath = $file->store('blog/gallery', 'public');
                     $blogPost->gallery()->create([
-                        'image_path' => $galleryPath,
+                        'image' => $galleryPath,
                         'caption' => $validatedData['gallery_captions'][$index] ?? null,
                         'alt_text' => $validatedData['gallery_alts'][$index] ?? $blogPost->title . ' galeri görseli ' . ($index + 1),
                         'order' => $index + 1,
@@ -122,8 +124,6 @@ class BlogPostController extends Controller
                 // Policy kontrolü (eğer publish yetkisi ayrıysa)
                 // $this->authorize('publish', $blogPost);
                 $blogPost->publish(); // Model içindeki publish metodu
-            } else {
-                $blogPost->saveDraft(); // Model içindeki saveDraft metodu
             }
 
 
@@ -185,7 +185,7 @@ class BlogPostController extends Controller
         });
 
 
-        return Inertia::render('Admin/Blog/Edit', [
+        return Inertia::render('Blog/Edit', [
             'blogPost' => [ // Sadece gerekli alanları ve formatlanmış veriyi gönder
                 'id' => $blogPost->id,
                 'title' => $blogPost->title,
@@ -226,8 +226,9 @@ class BlogPostController extends Controller
             $blogPost->content = $validatedData['content'];
             $blogPost->meta_description = $validatedData['meta_description'] ?? null;
             $blogPost->tags = $validatedData['tags'] ?? [];
-            $blogPost->formatting = $validatedData['formatting'] ?? $blogPost->formatting; // Eğer gelmezse eskisini koru
+            $blogPost->formatting = $validatedData['formatting'] ?? $blogPost->formatting;
             $blogPost->scheduled_at = isset($validatedData['scheduled_at']) ? Carbon::parse($validatedData['scheduled_at']) : null;
+            $blogPost->status = $validatedData['status'] ?? 'draft';
 
             // Öne çıkan görsel güncelleme
             if ($request->hasFile('featured_image')) {
@@ -264,7 +265,7 @@ class BlogPostController extends Controller
                 foreach ($request->file('gallery_images') as $index => $file) {
                     $galleryPath = $file->store('blog/gallery', 'public');
                     $blogPost->gallery()->create([
-                        'image_path' => $galleryPath,
+                        'image' => $galleryPath,
                         'caption' => $request->input("gallery_captions.{$index}") ?? null,
                         'alt_text' => $request->input("gallery_alts.{$index}") ?? $blogPost->title . ' galeri görseli ' . ($order + $index + 1),
                         'order' => $order + $index + 1,
@@ -310,56 +311,7 @@ class BlogPostController extends Controller
         }
     }
 
-    /**
-     * API endpoint to save a blog post as a draft.
-     * Bu metod artık store ve update içinde yönetiliyor,
-     * ancak API için ayrı bir endpoint isteniyorsa kullanılabilir.
-     * Bu örnekte, store/update içindeki taslak mantığı yeterlidir.
-     * Eğer ayrı bir 'saveDraft' API'si isteniyorsa, Store/UpdateBlogPostRequest'e benzer
-     * daha esnek bir request sınıfı ile (örn: bazı alanlar nullable) güncellenmeli.
-     */
-    public function saveDraft(Request $request)
-    {
-        // Bu API endpoint'i için validasyon ve yetkilendirme eklenmeli.
-        // Örneğin, sadece 'title' ve 'content' ile taslak kaydedilebilmeli.
-        $request->validate([
-            'id' => 'nullable|exists:blog_posts,id', // Güncellenecek taslak ID'si
-            'title' => 'required_without:id|string|max:255', // Yeni taslak için başlık zorunlu
-            'content' => 'nullable|string',
-            // ... diğer taslak için gerekli olabilecek alanlar
-        ]);
-
-        $user = $request->user();
-
-        try {
-            $blogData = $request->only(['title', 'content', 'meta_description', 'tags', 'formatting', 'category_ids', 'scheduled_at']);
-            $blogData['user_id'] = $user->id;
-            $blogData['status'] = 'draft';
-            $blogData['published_at'] = null;
-
-            if ($request->has('title')) {
-                 $blogData['slug'] = BlogPost::generateUniqueSlug($request->title, $request->id);
-            }
-
-
-            $blogPost = BlogPost::updateOrCreate(
-                ['id' => $request->id, 'user_id' => $user->id], // Sadece kendi taslağını güncelleyebilsin
-                $blogData
-            );
-
-            if ($request->has('category_ids')) {
-                $blogPost->categories()->sync($request->category_ids);
-            }
-
-            // Öne çıkan görsel ve galeri işlemleri de buraya eklenebilir (store/update metodlarındaki gibi)
-
-            return response()->json(['message' => 'Taslak başarıyla kaydedildi.', 'blog_post' => $blogPost->fresh()->load('categories')], 200);
-
-        } catch (\Exception $e) {
-            Log::error("Taslak kaydetme hatası: " . $e->getMessage(), ['request' => $request->all()]);
-            return response()->json(['message' => 'Taslak kaydedilirken bir hata oluştu: ' . $e->getMessage()], 500);
-        }
-    }
+    
 
     /**
      * API endpoint to upload an image for the rich text editor (e.g., TinyMCE).

@@ -13,9 +13,6 @@ class BlogPost extends Model
 {
     use HasFactory;
 
-    // CRITICAL: 'status' is REMOVED from fillable.
-    // 'is_published' and 'is_draft' are included as they are actual DB columns
-    // and the controller prepares them for mass assignment.
     protected $fillable = [
         'user_id',
         'title',
@@ -27,9 +24,7 @@ class BlogPost extends Model
         'published_at',
         'scheduled_at',
         'formatting',
-        'is_published',   // Actual database column
-        'is_draft',       // Actual database column
-        // 'formatting_new' is not included as it's not handled by controller or Vue
+        'status',
     ];
 
     protected $casts = [
@@ -37,12 +32,8 @@ class BlogPost extends Model
         'published_at' => 'datetime',
         'scheduled_at' => 'datetime',
         'formatting' => 'json',
-        'is_published' => 'boolean', // Cast to boolean
-        'is_draft' => 'boolean',     // Cast to boolean
     ];
 
-    // CRITICAL: 'status' is REMOVED from default attributes.
-    // Defaulting is_draft to true, controller will override based on input.
     protected $attributes = [
         'formatting' => '{
             "font": "Inter",
@@ -51,8 +42,6 @@ class BlogPost extends Model
             "textAlign": "left",
             "color": "#333333"
         }',
-        'is_draft' => true,
-        'is_published' => false,
     ];
 
     /**
@@ -141,27 +130,7 @@ class BlogPost extends Model
         return $slug;
     }
 
-    /**
-     * Scope a query to only include published blog posts.
-     * Uses 'is_published' and 'published_at' DB columns.
-     */
-    public function scopePublished(Builder $query): Builder
-    {
-        return $query->where('is_published', true)
-                     ->whereNotNull('published_at')
-                     ->where('published_at', '<=', Carbon::now());
-    }
-
-    /**
-     * Scope a query to only include draft blog posts.
-     * Uses 'is_draft' DB column.
-     */
-    public function scopeDrafts(Builder $query): Builder
-    {
-        return $query->where('is_draft', true);
-        // Alternatively, if a draft is anything not published:
-        // return $query->where('is_published', false);
-    }
+    
 
     /**
      * Scope a query to only include posts by a specific user.
@@ -172,49 +141,85 @@ class BlogPost extends Model
     }
 
     /**
+     * Scope a query to only include published posts.
+     */
+    public function scopePublished(Builder $query): Builder
+    {
+        return $query->where('status', 'published')
+                     ->where(function ($q) {
+                         $q->whereNull('scheduled_at')
+                           ->orWhere('scheduled_at', '<=', Carbon::now());
+                     });
+    }
+
+    /**
+     * Scope a query to only include draft posts.
+     */
+    public function scopeDraft(Builder $query): Builder
+    {
+        return $query->where('status', 'draft');
+    }
+
+    /**
      * Scope a query to only include posts that are scheduled and due for publication.
-     * These are posts that are not yet published but their scheduled_at time has arrived.
      */
     public function scopeScheduledAndDue(Builder $query): Builder
     {
-        return $query->where('is_published', false) // Not yet published
-                     // ->where('is_draft', true)    // Optionally, ensure it's still marked as a draft
+        return $query->where('status', 'draft')
                      ->whereNotNull('scheduled_at')
                      ->where('scheduled_at', '<=', Carbon::now());
     }
 
     /**
-     * Marks the post as a draft.
-     * Note: The controller typically handles setting these before saving.
-     * This method is for direct model manipulation if needed, call $model->save() afterwards.
+     * Publish the blog post.
      */
-    public function markAsDraft(): self
+    public function publish(): bool
     {
-        $this->is_published = false;
-        $this->is_draft = true;
-        $this->published_at = null;
-        // $this->scheduled_at = null; // Optionally clear schedule
-        return $this;
+        $this->status = 'published';
+        $this->published_at = Carbon::now();
+        
+        // If scheduled for future and being published now, clear scheduled_at
+        if ($this->scheduled_at && $this->scheduled_at->isFuture()) {
+            $this->scheduled_at = null;
+        }
+        
+        return $this->save();
     }
 
     /**
-     * Marks the post as published.
-     * Note: The controller typically handles setting these before saving.
-     * This method is for direct model manipulation if needed, call $model->save() afterwards.
+     * Unpublish the blog post (make it draft).
      */
-    public function markAsPublished(): self
+    public function unpublish(): bool
     {
-        // This method assumes immediate publishing if called directly.
-        // The controller and scheduled task handle the nuances of scheduled_at.
-        $this->is_published = true;
-        $this->is_draft = false;
-        // Set published_at only if it's not already set (to preserve original publish date on updates)
-        // or if it was previously a draft.
-        if ($this->published_at === null || !$this->getOriginal('is_published')) {
-            $this->published_at = Carbon::now();
-        }
-        $this->scheduled_at = null; // Clear schedule once published
-        return $this;
+        $this->status = 'draft';
+        $this->published_at = null;
+        return $this->save();
+    }
+
+    /**
+     * Save as draft.
+     */
+    public function saveDraft(): bool
+    {
+        $this->status = 'draft';
+        return $this->save();
+    }
+
+    /**
+     * Check if the post is published.
+     */
+    public function isPublished(): bool
+    {
+        return $this->status === 'published' && 
+               ($this->scheduled_at === null || $this->scheduled_at->isPast());
+    }
+
+    /**
+     * Check if the post is scheduled for future publication.
+     */
+    public function isScheduled(): bool
+    {
+        return $this->scheduled_at !== null && $this->scheduled_at->isFuture();
     }
 
     /**
